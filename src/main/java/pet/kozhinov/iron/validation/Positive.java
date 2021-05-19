@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = AccurateNumberPositiveValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AccurateNumberPositive {
+public @interface Positive {
     String message() default "Number is not positive";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

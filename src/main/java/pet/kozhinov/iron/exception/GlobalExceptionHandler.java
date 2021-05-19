@@ -56,9 +56,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put(HANDLER_TIMESTAMP_PARAMETER, LocalDateTime.now());
 
-        log.error(ex.getMessage());
-        ex.printStackTrace();
-
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

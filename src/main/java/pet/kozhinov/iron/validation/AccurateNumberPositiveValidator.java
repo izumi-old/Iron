@@ -5,7 +5,7 @@ import pet.kozhinov.iron.utils.AccurateNumber;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class AccurateNumberPositiveValidator implements ConstraintValidator<AccurateNumberPositive, AccurateNumber> {
+public class AccurateNumberPositiveValidator implements ConstraintValidator<Positive, AccurateNumber> {
 
     @Override
     public boolean isValid(AccurateNumber value, ConstraintValidatorContext context) {

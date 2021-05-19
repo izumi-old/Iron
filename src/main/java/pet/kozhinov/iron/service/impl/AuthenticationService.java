@@ -10,6 +10,8 @@ import pet.kozhinov.iron.entity.Person;
 import pet.kozhinov.iron.security.PersonDetails;
 import pet.kozhinov.iron.service.PersonService;
 
+import javax.validation.constraints.NotNull;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -17,7 +19,7 @@ public class AuthenticationService implements UserDetailsService {
     private final PersonService personService;
 
     @Override
-    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(@NotNull String login) throws UsernameNotFoundException {
         log.debug("Loading person by login {{}}", login);
         try {
             Person person = personService.getByEmail(login).orElseGet(

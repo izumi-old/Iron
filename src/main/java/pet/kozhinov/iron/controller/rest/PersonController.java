@@ -16,6 +16,7 @@ import pet.kozhinov.iron.security.PersonDetails;
 import pet.kozhinov.iron.service.LoanCaseService;
 import pet.kozhinov.iron.service.PersonService;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -30,12 +31,12 @@ public class PersonController {
     private final LoanCaseService loanCaseService;
 
     @GetMapping("/")
-    public Collection<Person> getClients(@RequestParam String role) {
+    public Collection<Person> getClients(@NotBlank @RequestParam String role) {
         return personService.getByRole(role.toUpperCase());
     }
 
     @GetMapping("/{id}/loans")
-    public Collection<LoanCaseDto> getLoans(@PathVariable String id, Authentication authentication) {
+    public Collection<LoanCaseDto> getLoans(@NotBlank @PathVariable String id, Authentication authentication) {
         if (id != null && id.equals(CURRENT_PERSON_KEYWORD)) {
             id = ((PersonDetails) authentication.getPrincipal()).getId().toString();
         }
@@ -43,7 +44,7 @@ public class PersonController {
     }
 
     @GetMapping("/{id}/offers")
-    public Collection<LoanCaseDto> getLoanOffers(@PathVariable String id, Authentication authentication) {
+    public Collection<LoanCaseDto> getLoanOffers(@NotBlank @PathVariable String id, Authentication authentication) {
         if (id != null && id.equals(CURRENT_PERSON_KEYWORD)) {
             id = ((PersonDetails) authentication.getPrincipal()).getId().toString();
         }
@@ -51,8 +52,8 @@ public class PersonController {
     }
 
     @PatchMapping("/{id}/offers/{loanId}")
-    public LoanCaseDto updateLoanCase(@PathVariable String id, @PathVariable String loanId,
-                                                  @RequestParam String newStatus, Authentication authentication) {
+    public LoanCaseDto updateLoanCase(@NotBlank @PathVariable String id, @NotBlank @PathVariable String loanId,
+                                      @NotBlank @RequestParam String newStatus, Authentication authentication) {
         if (id != null && id.equals(CURRENT_PERSON_KEYWORD)) {
             id = ((PersonDetails) authentication.getPrincipal()).getId().toString();
         }

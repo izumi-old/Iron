@@ -22,7 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
             .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            /*.sessionCreationPolicy(SessionCreationPolicy.STATELESS)*/
         .and()
             .authorizeRequests()
             .antMatchers(API_PREFIX + "/persons/*/loans/**").hasAuthority(Role.Default.CLIENT.toString())

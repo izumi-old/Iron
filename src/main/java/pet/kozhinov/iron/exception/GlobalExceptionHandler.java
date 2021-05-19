@@ -1,5 +1,6 @@
 package pet.kozhinov.iron.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ValidationException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -22,6 +24,7 @@ import static pet.kozhinov.iron.utils.Constants.HANDLER_MESSAGE_PARAMETER;
 import static pet.kozhinov.iron.utils.Constants.HANDLER_STATUS_PARAMETER;
 import static pet.kozhinov.iron.utils.Constants.HANDLER_TIMESTAMP_PARAMETER;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -39,10 +42,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleAllUncaughtException(ex);
     }
 
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<Object> handleValidationException(ValidationException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put(HANDLER_TIMESTAMP_PARAMETER, LocalDate.now());
+        body.put(HANDLER_ERRORS_PARAMETER, ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Object> handleAllUncaughtException(RuntimeException ex) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put(HANDLER_TIMESTAMP_PARAMETER, LocalDateTime.now());
+
+        log.error(ex.getMessage());
+        ex.printStackTrace();
 
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -1,4 +1,4 @@
-package pet.kozhinov.iron.entity.email;
+package pet.kozhinov.iron.entity.notification.email;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,8 @@ import javax.validation.constraints.NotNull;
 
 @RequiredArgsConstructor
 @Data
-public abstract class Template {
+public abstract class Template implements pet.kozhinov.iron.entity.notification.email.Email {
+    private String from;
 
     @NotNull
     private final String subject;

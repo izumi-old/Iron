@@ -33,10 +33,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
             .authorizeRequests()
-            .antMatchers(POST, API_SIGNUP_URL).anonymous()
             .antMatchers(API_PREFIX + "/persons/*/loans/**").hasAuthority(Role.Default.CLIENT.toString())
             .antMatchers(API_PREFIX + "/persons/*/offers/**").hasAuthority(Role.Default.CLIENT.toString())
-            .antMatchers(API_PREFIX + "/persons/", API_PREFIX + "/loan-cases/**", API_PREFIX + "/loans/**")
+            .antMatchers(API_SIGNUP_URL, API_PREFIX + "/persons/",
+                    API_PREFIX + "/loan-cases/**", API_PREFIX + "/loans/**")
                 .hasAnyAuthority(Role.Default.MANAGER.toString(), Role.Default.ADMIN.toString())
             .antMatchers(API_PREFIX + "/client/**").hasAuthority(Role.Default.CLIENT.toString())
             .antMatchers(API_PREFIX + "/manager/**").hasAuthority(Role.Default.MANAGER.toString())

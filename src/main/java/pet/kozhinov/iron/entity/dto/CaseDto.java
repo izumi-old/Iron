@@ -1,5 +1,6 @@
 package pet.kozhinov.iron.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import pet.kozhinov.iron.entity.Payment;
 import pet.kozhinov.iron.entity.Person;
@@ -15,6 +16,7 @@ import java.util.Collection;
 
 @ValidLoanCaseAmountRange
 @ValidLoanCaseDurationRange
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class CaseDto {
 

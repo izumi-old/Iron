@@ -1,4 +1,4 @@
-package pet.kozhinov.iron.entity.email;
+package pet.kozhinov.iron.entity.notification.email;
 
 public class NewLoanCaseNotification extends Template {
     public NewLoanCaseNotification(String to) {

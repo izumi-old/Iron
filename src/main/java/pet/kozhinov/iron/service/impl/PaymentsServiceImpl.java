@@ -9,17 +9,16 @@ import pet.kozhinov.iron.utils.AccurateNumber;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import static pet.kozhinov.iron.utils.Constants.*;
 import static pet.kozhinov.iron.utils.Constants.ANNUITY_COEFFICIENT;
+import static pet.kozhinov.iron.utils.Constants.MAX_PERCENTS;
+import static pet.kozhinov.iron.utils.Constants.MONTHS_IN_YEAR;
 
 @Service
 public class PaymentsServiceImpl implements PaymentsService {
 
     /*
     formulas:
-
-            1) P = S * (i + i / ((1+i)^n - 1));
-
+    1) P = S * (i + i / ((1+i)^n - 1));
     y = (1+i)^n -1;
     x = i / y;
     P = S * (i + x);

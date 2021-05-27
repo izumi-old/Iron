@@ -12,12 +12,12 @@ import java.util.Collection;
 import static pet.kozhinov.iron.utils.Constants.API_PREFIX;
 
 @RequiredArgsConstructor
-@RequestMapping(API_PREFIX + "/loans")
+@RequestMapping(API_PREFIX)
 @RestController
 public class LoanController {
     private final LoanService loanService;
 
-    @GetMapping("/")
+    @GetMapping("/loans")
     public Collection<LoanDto> getAll() {
         return loanService.getAll();
     }

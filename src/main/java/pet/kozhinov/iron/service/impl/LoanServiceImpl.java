@@ -8,7 +8,6 @@ import pet.kozhinov.iron.mapper.LoanMapper;
 import pet.kozhinov.iron.repository.LoanRepository;
 import pet.kozhinov.iron.service.LoanService;
 
-import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,7 +19,7 @@ public class LoanServiceImpl implements LoanService {
     private final LoanMapper mapper;
 
     @Override
-    public Optional<Loan> getById(@NotBlank String id) {
+    public Optional<Loan> getById(String id) {
         return repository.findById(Long.parseLong(id));
     }
 

@@ -2,7 +2,6 @@ package pet.kozhinov.iron.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import pet.kozhinov.iron.entity.Person;
 import pet.kozhinov.iron.entity.Role;
 import pet.kozhinov.iron.entity.dto.PersonDto;
@@ -10,9 +9,6 @@ import pet.kozhinov.iron.mapper.Mapper;
 import pet.kozhinov.iron.repository.PersonRepository;
 import pet.kozhinov.iron.service.PersonService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -24,22 +20,21 @@ public class PersonServiceImpl implements PersonService {
     private final PersonRepository repository;
     private final Mapper<Person, PersonDto> mapper;
 
-    @Validated
     @Override
     public PersonDto signup(PersonDto personDto) {
-        @Valid Person toSave = mapper.map2(personDto);
+        Person toSave = mapper.map2(personDto);
         Person saved = repository.save(toSave);
         return mapper.map1(saved);
     }
 
     @Override
-    public Optional<PersonDto> getById(@NotBlank String id) {
+    public Optional<PersonDto> getById(String id) {
         return repository.findById(Long.parseLong(id))
                 .map(mapper::map1);
     }
 
     @Override
-    public Optional<Person> getByLogin(@NotBlank String login) {
+    public Optional<Person> getByLogin(String login) {
         Optional<Person> optional = getByEmail(login);
         if (optional.isPresent()) {
             return optional;
@@ -49,12 +44,12 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Optional<Person> getByEmail(@Email String email) {
+    public Optional<Person> getByEmail(String email) {
         return repository.findByEmail(email);
     }
 
     @Override
-    public Optional<Person> getByPhoneNumber(@NotBlank String phoneNumber) {
+    public Optional<Person> getByPhoneNumber(String phoneNumber) {
         return repository.findByPhoneNumber(phoneNumber);
     }
 
@@ -66,7 +61,7 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Collection<PersonDto> getAllByRole(@NotBlank String role) {
+    public Collection<PersonDto> getAllByRole(String role) {
         Collection<Person> result = new ArrayList<>();
         repository.findAll().forEach(person -> {
             for (Role role0 : person.getRoles()) {

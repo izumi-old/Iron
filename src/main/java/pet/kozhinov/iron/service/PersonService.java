@@ -1,17 +1,22 @@
 package pet.kozhinov.iron.service;
 
+import org.springframework.validation.annotation.Validated;
 import pet.kozhinov.iron.entity.Person;
 import pet.kozhinov.iron.entity.dto.PersonDto;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.Optional;
 
+@Validated
 public interface PersonService {
-    PersonDto signup(PersonDto personDto);
-    Optional<PersonDto> getById(String id);
-    Optional<Person> getByLogin(String login);
-    Optional<Person> getByEmail(String email);
-    Optional<Person> getByPhoneNumber(String phoneNumber);
+    PersonDto signup(@Valid PersonDto personDto);
+    Optional<PersonDto> getById(@NotBlank String id);
+    Optional<Person> getByLogin(@NotBlank String login);
+    Optional<Person> getByEmail(@NotBlank @Email String email);
+    Optional<Person> getByPhoneNumber(@NotBlank String phoneNumber);
     Collection<PersonDto> getAll();
-    Collection<PersonDto> getAllByRole(String role);
+    Collection<PersonDto> getAllByRole(@NotBlank String role);
 }

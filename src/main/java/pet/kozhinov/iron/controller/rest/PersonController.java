@@ -1,6 +1,7 @@
 package pet.kozhinov.iron.controller.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,16 +19,18 @@ import pet.kozhinov.iron.service.CaseService;
 import pet.kozhinov.iron.service.PersonService;
 
 import javax.validation.constraints.NotBlank;
-import java.util.Collection;
 
 import static pet.kozhinov.iron.utils.Constants.API_PREFIX;
 import static pet.kozhinov.iron.utils.Constants.CURRENT_PERSON_KEYWORD;
 import static pet.kozhinov.iron.utils.SecurityUtils.hasRole;
+import static pet.kozhinov.iron.utils.Utils.toPage;
+import static pet.kozhinov.iron.utils.ValidationUtils.validatePagination;
 
 @RequiredArgsConstructor
 @RequestMapping(API_PREFIX)
-@RestController
+@RestController(PersonController.NAME)
 public class PersonController {
+    public static final String NAME = "iron_PersonController";
     private final PersonService personService;
     private final CaseService caseService;
 
@@ -52,18 +55,36 @@ public class PersonController {
     }
 
     @GetMapping("/persons")
-    public Collection<PersonDto> getAll() {
-        return personService.getAll();
+    public Page<PersonDto> getAll(@RequestParam(required = false) Integer page,
+                                  @RequestParam(required = false) Integer size) {
+        validatePagination(page, size);
+        boolean noPagination = page == null;
+        if (noPagination) {
+            return toPage(personService.getAll());
+        }
+
+        return personService.getAll(page, size);
     }
 
     @GetMapping("/persons/filtered")
-    public Collection<PersonDto> getAll(@RequestParam String role) {
-        return personService.getAllByRole(role.toUpperCase());
+    public Page<PersonDto> getAll(@RequestParam String role,
+                                  @RequestParam(required = false) Integer page,
+                                  @RequestParam(required = false) Integer size) {
+        validatePagination(page, size);
+        boolean noPagination = page == null;
+        if (noPagination) {
+            return toPage(personService.getAllByRole(role.toUpperCase()));
+        }
+
+        return personService.getAllByRole(page, size, role.toUpperCase());
     }
 
     @GetMapping("/person/{personId}/loans")
-    public Collection<CaseDto> getLoans(Authentication authentication,
-                                        @NotBlank @PathVariable String personId) {
+    public Page<CaseDto> getLoans(Authentication authentication,
+                                  @NotBlank @PathVariable String personId,
+                                  @RequestParam(required = false) Integer page,
+                                  @RequestParam(required = false) Integer size) {
+        validatePagination(page, size);
         Person current = ((Person) authentication.getPrincipal());
         if (personId.equals(CURRENT_PERSON_KEYWORD)) {
             personId = current.getId().toString();
@@ -71,12 +92,21 @@ public class PersonController {
                 hasRole(Role.Default.ADMIN, current.getRoles()))) {
             throw new ForbiddenException();
         }
-        return caseService.getAllAcceptedForClient(personId);
+
+        boolean noPagination = page == null;
+        if (noPagination) {
+            return toPage(caseService.getAllAcceptedForClient(personId));
+        }
+
+        return caseService.getAllAcceptedForClient(page, size, personId);
     }
 
     @GetMapping("/person/{personId}/offers")
-    public Collection<CaseDto> getLoanOffers(Authentication authentication,
-                                             @NotBlank @PathVariable String personId) {
+    public Page<CaseDto> getLoanOffers(Authentication authentication,
+                                             @NotBlank @PathVariable String personId,
+                                             @RequestParam(required = false) Integer page,
+                                             @RequestParam(required = false) Integer size) {
+        validatePagination(page, size);
         Person current = ((Person) authentication.getPrincipal());
         if (personId.equals(CURRENT_PERSON_KEYWORD)) {
             personId = current.getId().toString();
@@ -84,6 +114,12 @@ public class PersonController {
                 hasRole(Role.Default.ADMIN, current.getRoles()))) {
             throw new ForbiddenException();
         }
-        return caseService.getAllPendingForClient(personId);
+
+        boolean noPagination = page == null;
+        if (noPagination) {
+            return toPage(caseService.getAllPendingForClient(personId));
+        }
+
+        return caseService.getAllPendingForClient(page, size, personId);
     }
 }

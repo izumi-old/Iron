@@ -1,6 +1,7 @@
 package pet.kozhinov.iron.controller.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,30 +18,46 @@ import pet.kozhinov.iron.exception.BadRequestException;
 import pet.kozhinov.iron.service.CaseService;
 
 import javax.validation.constraints.NotBlank;
-import java.util.Collection;
 
 import static pet.kozhinov.iron.utils.Constants.API_PREFIX;
+import static pet.kozhinov.iron.utils.Utils.toPage;
+import static pet.kozhinov.iron.utils.ValidationUtils.validatePagination;
 
 @RequiredArgsConstructor
 @RequestMapping(API_PREFIX)
-@RestController
+@RestController(CaseController.NAME)
 public class CaseController {
+    public static final String NAME = "iron_CaseController";
     private final CaseService caseService;
 
-    @PostMapping(value = "/cases")
+    @PostMapping(value = "/case")
     public CaseDto create(@RequestBody CaseDto dto) {
         return caseService.save(dto);
     }
 
-    @GetMapping("/cases/filtered")
-    public Collection<CaseDto> getAllPendingOffers(@RequestParam String filterStatus) {
-        if (filterStatus.equals("pending")) {
-            return caseService.getAllPending();
-        } else if (filterStatus.equals("in-progress")) {
-            return caseService.getAllAcceptedInProgress();
-        } else {
-            throw new BadRequestException("Incorrect/unknown filter parameter");
+    @GetMapping("/cases")
+    public Page<CaseDto> getAll(@RequestParam(required = false) Integer page,
+                                @RequestParam(required = false) Integer size) {
+        validatePagination(page, size);
+        boolean noPagination = page == null;
+        if (noPagination) {
+            return toPage(caseService.getAll());
         }
+
+        return caseService.getAll(page, size);
+    }
+
+    @GetMapping("/cases/filtered")
+    public Page<CaseDto> getAll(@RequestParam(required = false) Integer page,
+                                @RequestParam(required = false) Integer size,
+                                @RequestParam String filterStatus) {
+        validatePagination(page, size);
+        boolean noPagination = page == null;
+        if (noPagination) {
+            return getAllNoPagination(filterStatus);
+        }
+
+        return getAllPagination(page, size, filterStatus);
     }
 
     @PatchMapping("/case")
@@ -52,5 +69,25 @@ public class CaseController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@NotBlank @PathVariable String id) {
         caseService.delete(id);
+    }
+
+    private Page<CaseDto> getAllNoPagination(String filterStatus) {
+        if (filterStatus.equals("pending")) {
+            return toPage(caseService.getAllPending());
+        } else if (filterStatus.equals("in-progress")) {
+            return toPage(caseService.getAllAcceptedInProgress());
+        } else {
+            throw new BadRequestException("Incorrect/unknown filter parameter");
+        }
+    }
+
+    private Page<CaseDto> getAllPagination(int page, int size, String filterStatus) {
+        if (filterStatus.equals("pending")) {
+            return caseService.getAllPending(page, size);
+        } else if (filterStatus.equals("in-progress")) {
+            return caseService.getAllAcceptedInProgress(page, size);
+        } else {
+            throw new BadRequestException("Incorrect/unknown filter parameter");
+        }
     }
 }

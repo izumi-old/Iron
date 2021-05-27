@@ -1,6 +1,8 @@
 package pet.kozhinov.iron.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import pet.kozhinov.iron.entity.Person;
 import pet.kozhinov.iron.entity.Role;
@@ -14,9 +16,12 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static pet.kozhinov.iron.utils.Utils.toPage;
+
 @RequiredArgsConstructor
-@Service
+@Service(PersonServiceImpl.NAME)
 public class PersonServiceImpl implements PersonService {
+    public static final String NAME = "iron_PersonServiceImpl";
     private final PersonRepository repository;
     private final Mapper<Person, PersonDto> mapper;
 
@@ -75,5 +80,16 @@ public class PersonServiceImpl implements PersonService {
         return result.stream()
                 .map(mapper::map1)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<PersonDto> getAll(int page, int size) {
+        return repository.findAll(PageRequest.of(page, size))
+                .map(mapper::map1);
+    }
+
+    @Override
+    public Page<PersonDto> getAllByRole(int page, int size, String role) {
+        return toPage(getAllByRole(role), page, size);
     }
 }

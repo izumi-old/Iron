@@ -7,8 +7,10 @@ import pet.kozhinov.iron.entity.Status;
 
 import java.util.Collection;
 
-@Repository
+@Repository(CaseRepository.NAME)
 public interface CaseRepository extends JpaRepository<Case, Long> {
+    String NAME = "iron_CaseRepository";
+
     Collection<Case> findAllByStatusBankSideAndStatusClientSideAndClosed(
             Status statusBankSide, Status statusClientSide, boolean closed);
 

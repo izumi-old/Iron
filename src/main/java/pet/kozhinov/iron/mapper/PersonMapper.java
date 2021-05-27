@@ -4,8 +4,9 @@ import org.springframework.stereotype.Component;
 import pet.kozhinov.iron.entity.Person;
 import pet.kozhinov.iron.entity.dto.PersonDto;
 
-@Component
+@Component(PersonMapper.NAME)
 public class PersonMapper implements Mapper<Person, PersonDto> {
+    public static final String NAME = "iron_PersonMapper";
 
     @Override
     public PersonDto map1(Person from) {

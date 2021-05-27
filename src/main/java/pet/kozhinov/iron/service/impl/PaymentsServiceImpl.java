@@ -13,8 +13,9 @@ import static pet.kozhinov.iron.utils.Constants.ANNUITY_COEFFICIENT;
 import static pet.kozhinov.iron.utils.Constants.MAX_PERCENTS;
 import static pet.kozhinov.iron.utils.Constants.MONTHS_IN_YEAR;
 
-@Service
+@Service(PaymentsServiceImpl.NAME)
 public class PaymentsServiceImpl implements PaymentsService {
+    public static final String NAME = "iron_PaymentsServiceImpl";
 
     /*
     formulas:

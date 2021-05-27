@@ -1,6 +1,8 @@
 package pet.kozhinov.iron.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import pet.kozhinov.iron.entity.Case;
 import pet.kozhinov.iron.entity.Status;
@@ -13,6 +15,7 @@ import pet.kozhinov.iron.service.PaymentsService;
 import pet.kozhinov.iron.utils.AccurateNumber;
 import pet.kozhinov.iron.utils.ValidationUtils;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
@@ -21,10 +24,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pet.kozhinov.iron.entity.Status.APPROVED;
+import static pet.kozhinov.iron.utils.Utils.toPage;
 
 @RequiredArgsConstructor
-@Service
+@Service(CaseServiceImpl.NAME)
 public class CaseServiceImpl implements CaseService {
+    public static final String NAME = "iron_CaseServiceImpl";
     private final CaseRepository repository;
     private final CaseMapper mapper;
     private final PaymentsService paymentsService;
@@ -34,16 +39,24 @@ public class CaseServiceImpl implements CaseService {
     }
 
     @Override
+    public Collection<CaseDto> getAll() {
+        return repository.findAll().stream()
+                .map(mapper::map1)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Collection<CaseDto> getAllPending() {
         Collection<CaseDto> result = new LinkedList<>();
         result.addAll(repository.findAllByStatusBankSideAndStatusClientSideAndClosed(
-                        Status.PENDING, APPROVED, false).stream()
+                Status.PENDING, APPROVED, false).stream()
                 .map(mapper::map1)
                 .collect(Collectors.toList()));
         result.addAll(repository.findAllByStatusBankSideAndStatusClientSideAndClosed(
-                        APPROVED, Status.PENDING, false).stream()
+                APPROVED, Status.PENDING, false).stream()
                 .map(mapper::map1)
                 .collect(Collectors.toList()));
+
         return result;
     }
 
@@ -56,7 +69,7 @@ public class CaseServiceImpl implements CaseService {
     }
 
     @Override
-    public Collection<CaseDto> getAllPendingForClient(String clientId) {
+    public Collection<CaseDto> getAllPendingForClient(@NotBlank String clientId) {
         Long id = Long.parseLong(clientId);
         Collection<CaseDto> result = new LinkedList<>();
         result.addAll(repository.findAllByClientIdAndStatusBankSideAndStatusClientSide(
@@ -71,11 +84,37 @@ public class CaseServiceImpl implements CaseService {
     }
 
     @Override
-    public Collection<CaseDto> getAllAcceptedForClient(String clientId) {
+    public Collection<CaseDto> getAllAcceptedForClient(@NotBlank String clientId) {
         return repository.findAllByClientIdAndStatusBankSideAndStatusClientSide(
                 Long.parseLong(clientId), APPROVED, APPROVED).stream()
                 .map(mapper::map1)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<CaseDto> getAll(int page, int size) {
+        return repository.findAll(PageRequest.of(page, size))
+                .map(mapper::map1);
+    }
+
+    @Override
+    public Page<CaseDto> getAllPending(int page, int size) {
+        return toPage(getAllPending(), page, size);
+    }
+
+    @Override
+    public Page<CaseDto> getAllAcceptedInProgress(int page, int size) {
+        return toPage(getAllAcceptedInProgress(), page, size);
+    }
+
+    @Override
+    public Page<CaseDto> getAllPendingForClient(int page, int size, String clientId) {
+        return toPage(getAllPendingForClient(clientId), page, size);
+    }
+
+    @Override
+    public Page<CaseDto> getAllAcceptedForClient(int page, int size, String clientId) {
+        return toPage(getAllAcceptedForClient(clientId), page, size);
     }
 
     @Override

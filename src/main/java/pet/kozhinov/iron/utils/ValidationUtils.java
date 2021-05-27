@@ -8,6 +8,13 @@ import java.util.UUID;
 
 public final class ValidationUtils {
 
+    public static void validatePagination(Integer page, Integer size) throws BadRequestException {
+        boolean incorrectPagination = (page == null && size != null) || (page != null && size == null);
+        if (incorrectPagination) {
+            throw new BadRequestException();
+        }
+    }
+
     public static void validate(@Valid Case aCase) {
     }
 

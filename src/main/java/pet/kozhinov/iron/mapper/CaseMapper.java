@@ -6,16 +6,17 @@ import pet.kozhinov.iron.entity.Case;
 import pet.kozhinov.iron.entity.Status;
 import pet.kozhinov.iron.entity.dto.CaseDto;
 import pet.kozhinov.iron.exception.InternalServerErrorException;
+import pet.kozhinov.iron.repository.LoanRepository;
 import pet.kozhinov.iron.repository.PersonRepository;
-import pet.kozhinov.iron.service.LoanService;
 
 import java.util.LinkedList;
 
 @RequiredArgsConstructor
-@Component
+@Component(CaseMapper.NAME)
 public class CaseMapper implements Mapper<Case, CaseDto> {
+    public static final String NAME = "iron_CaseMapper";
     private final PersonRepository personRepository;
-    private final LoanService loanService;
+    private final LoanRepository loanRepository;
     private final LoanMapper loanMapper;
     private final AccurateConverter accurateNumberConverter;
 
@@ -33,7 +34,7 @@ public class CaseMapper implements Mapper<Case, CaseDto> {
         dto.setClosed(aCase.isClosed());
 
         dto.setClient(aCase.getClient());
-        dto.setLoan(loanMapper.toDto(aCase.getLoan()));
+        dto.setLoan(loanMapper.map1(aCase.getLoan()));
         dto.setPayments(aCase.getPayments());
         return dto;
     }
@@ -44,7 +45,7 @@ public class CaseMapper implements Mapper<Case, CaseDto> {
         aCase.setId(Long.parseLong(dto.getLoanId()));
         aCase.setClient(personRepository.findById(Long.parseLong(dto.getClientId()))
                 .orElseThrow(InternalServerErrorException::new));
-        aCase.setLoan(loanService.getById(dto.getLoanId())
+        aCase.setLoan(loanRepository.findById(Long.parseLong(dto.getLoanId()))
                 .orElseThrow(InternalServerErrorException::new));
         aCase.setPayments(new LinkedList<>());
         aCase.setAmount(accurateNumberConverter.convert2(dto.getAmount()));

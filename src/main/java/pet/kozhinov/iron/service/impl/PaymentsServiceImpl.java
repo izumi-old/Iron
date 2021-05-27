@@ -1,7 +1,7 @@
 package pet.kozhinov.iron.service.impl;
 
 import org.springframework.stereotype.Service;
-import pet.kozhinov.iron.entity.LoanCase;
+import pet.kozhinov.iron.entity.Case;
 import pet.kozhinov.iron.entity.Payment;
 import pet.kozhinov.iron.service.PaymentsService;
 import pet.kozhinov.iron.utils.AccurateNumber;
@@ -42,24 +42,24 @@ public class PaymentsServiceImpl implements PaymentsService {
     B - body amount
     */
     @Override
-    public Collection<Payment> schedule(LoanCase loanCase) {
-        AccurateNumber monthInterestRate = new AccurateNumber(loanCase.getLoan().getInterestRate())
+    public Collection<Payment> schedule(Case aCase) {
+        AccurateNumber monthInterestRate = new AccurateNumber(aCase.getLoan().getInterestRate())
                 .divide(MAX_PERCENTS)
                 .divide(MONTHS_IN_YEAR);
 
         AccurateNumber y = ((new AccurateNumber(ANNUITY_COEFFICIENT)
                 .add(monthInterestRate))
-                .pow(loanCase.getDurationMonths()))
+                .pow(aCase.getDurationMonths()))
                 .subtract(ANNUITY_COEFFICIENT);
         AccurateNumber x = monthInterestRate.divide(y);
 
         AccurateNumber annuityCoefficient = monthInterestRate.add(x);
 
-        AccurateNumber monthPayment = loanCase.getAmount().multiply(annuityCoefficient);
-        AccurateNumber left = loanCase.getAmount();
+        AccurateNumber monthPayment = aCase.getAmount().multiply(annuityCoefficient);
+        AccurateNumber left = aCase.getAmount();
 
         Collection<Payment> result = new LinkedList<>();
-        for (int i = 1; i <= loanCase.getDurationMonths(); i++) {
+        for (int i = 1; i <= aCase.getDurationMonths(); i++) {
             AccurateNumber percents = left.multiply(monthInterestRate);
             AccurateNumber body = monthPayment.subtract(percents);
 

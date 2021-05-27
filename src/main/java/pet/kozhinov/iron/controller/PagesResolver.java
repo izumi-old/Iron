@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 import pet.kozhinov.iron.entity.Role;
-import pet.kozhinov.iron.security.PersonDetails;
 
 import java.util.Collection;
 
@@ -64,13 +63,13 @@ public class PagesResolver {
     }
 
     private void putUsername(Authentication authentication, ModelAndView mav) {
-        PersonDetails details = (PersonDetails) authentication.getPrincipal();
+        /*PersonDetails details = (PersonDetails) authentication.getPrincipal();
         String username;
         if (details.getPatronymic() != null) {
             username = String.format("%s %s %s", details.getLastName(), details.getFirstName(), details.getPatronymic());
         } else {
             username = String.format("%s %s", details.getFirstName(), details.getLastName());
         }
-        mav.addObject("username", username);
+        mav.addObject("username", username);*/
     }
 }

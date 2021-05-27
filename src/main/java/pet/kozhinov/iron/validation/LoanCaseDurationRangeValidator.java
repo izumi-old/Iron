@@ -1,15 +1,15 @@
 package pet.kozhinov.iron.validation;
 
 import pet.kozhinov.iron.entity.Loan;
-import pet.kozhinov.iron.entity.LoanCase;
+import pet.kozhinov.iron.entity.Case;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class LoanCaseDurationRangeValidator implements ConstraintValidator<ValidLoanCaseDurationRange, LoanCase> {
+public class LoanCaseDurationRangeValidator implements ConstraintValidator<ValidLoanCaseDurationRange, Case> {
 
     @Override
-    public boolean isValid(LoanCase value, ConstraintValidatorContext context) {
+    public boolean isValid(Case value, ConstraintValidatorContext context) {
         Loan loan = value.getLoan();
         if (loan == null) {
             return false;

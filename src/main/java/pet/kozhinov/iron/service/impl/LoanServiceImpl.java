@@ -11,7 +11,6 @@ import pet.kozhinov.iron.service.LoanService;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -22,7 +21,7 @@ public class LoanServiceImpl implements LoanService {
 
     @Override
     public Optional<Loan> getById(@NotBlank String id) {
-        return repository.findById(UUID.fromString(id));
+        return repository.findById(Long.parseLong(id));
     }
 
     @Override

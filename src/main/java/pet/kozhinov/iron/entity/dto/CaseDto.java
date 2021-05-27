@@ -16,7 +16,7 @@ import java.util.Collection;
 @ValidLoanCaseAmountRange
 @ValidLoanCaseDurationRange
 @Data
-public class LoanCaseDto {
+public class CaseDto {
 
     private String id;
 

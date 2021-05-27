@@ -14,13 +14,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.validation.ValidationException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static pet.kozhinov.iron.utils.Constants.HANDLER_ERRORS_PARAMETER;
-import static pet.kozhinov.iron.utils.Constants.HANDLER_MESSAGE_PARAMETER;
 import static pet.kozhinov.iron.utils.Constants.HANDLER_STATUS_PARAMETER;
 import static pet.kozhinov.iron.utils.Constants.HANDLER_TIMESTAMP_PARAMETER;
 
@@ -28,27 +28,19 @@ import static pet.kozhinov.iron.utils.Constants.HANDLER_TIMESTAMP_PARAMETER;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler({BadRequestException.class, ValidationException.class, javax.validation.ValidationException.class})
+    public ResponseEntity<Object> handleBadRequestException(RuntimeException ex) {
+        return simpleHandleException(HttpStatus.BAD_REQUEST, "Bad request", ex);
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put(HANDLER_TIMESTAMP_PARAMETER, LocalDateTime.now());
-        body.put(HANDLER_MESSAGE_PARAMETER, ex.getMessage());
-
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        return simpleHandleException(HttpStatus.NOT_FOUND, "Not found", ex);
     }
 
-    @ExceptionHandler(InternalServerErrorException.class)
-    public ResponseEntity<Object> handleInternalServerErrorException(InternalServerErrorException ex) {
-        return handleAllUncaughtException(ex);
-    }
-
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<Object> handleValidationException(ValidationException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put(HANDLER_TIMESTAMP_PARAMETER, LocalDate.now());
-        body.put(HANDLER_ERRORS_PARAMETER, ex.getMessage());
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Object> handleForbiddenException(ForbiddenException ex) {
+        return simpleHandleException(HttpStatus.FORBIDDEN, "Forbidden", ex);
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -77,5 +69,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         body.put(HANDLER_ERRORS_PARAMETER, errors);
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    private ResponseEntity<Object> simpleHandleException(HttpStatus status, String message, RuntimeException ex) {
+        log.error(ex.getMessage());
+        List<String> details = new ArrayList<>();
+        details.add(ex.getLocalizedMessage());
+        ErrorResponse error = new ErrorResponse(message, details);
+        return new ResponseEntity<>(error, status);
     }
 }

@@ -1,23 +1,34 @@
 package pet.kozhinov.iron.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.PostLoad;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.util.Set;
 
 @Data
-@Table
+@Table(name = "role")
 @Entity
 public class Role implements GrantedAuthority {
+
+    @GeneratedValue
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Long id;
+
+    @Column
     private String name;
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @ManyToMany(mappedBy="roles")
+    public Set<Person> persons;
 
     @Override
     public String getAuthority() {

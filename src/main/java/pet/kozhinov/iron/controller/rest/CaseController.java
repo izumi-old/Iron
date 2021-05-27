@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import pet.kozhinov.iron.entity.dto.LoanCaseDto;
-import pet.kozhinov.iron.service.LoanCaseService;
+import pet.kozhinov.iron.entity.dto.CaseDto;
+import pet.kozhinov.iron.service.CaseService;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
@@ -22,27 +22,27 @@ import static pet.kozhinov.iron.utils.Constants.API_PREFIX;
 @RequiredArgsConstructor
 @RequestMapping(API_PREFIX + "/loan-cases")
 @RestController
-public class LoanCaseController {
-    private final LoanCaseService loanCaseService;
+public class CaseController {
+    private final CaseService caseService;
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public LoanCaseDto post(@RequestBody LoanCaseDto dto) {
-        return loanCaseService.save(dto);
+    public CaseDto post(@RequestBody CaseDto dto) {
+        return caseService.save(dto);
     }
 
     @GetMapping("/pending")
-    public Collection<LoanCaseDto> getAllPendingOffers() {
-        return loanCaseService.getAllPending();
+    public Collection<CaseDto> getAllPendingOffers() {
+        return caseService.getAllPending();
     }
 
     @GetMapping("/in-progress")
-    public Collection<LoanCaseDto> getAllAcceptedInProgressOfPaying() {
-        return loanCaseService.getAllAcceptedInProgress();
+    public Collection<CaseDto> getAllAcceptedInProgressOfPaying() {
+        return caseService.getAllAcceptedInProgress();
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@NotBlank @PathVariable String id) {
-        loanCaseService.delete(id);
+        caseService.delete(id);
     }
 }

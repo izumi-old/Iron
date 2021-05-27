@@ -1,10 +1,10 @@
 CREATE TABLE role (
-    id SMALLINT PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     name VARCHAR(64) NOT NULL UNIQUE
 );
 
 CREATE TABLE person (
-    id UUID PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     first_name VARCHAR(64) NOT NULL,
     last_name VARCHAR(64) NOT NULL,
     patronymic VARCHAR(64) NULL,
@@ -15,25 +15,25 @@ CREATE TABLE person (
 );
 
 CREATE TABLE person_role (
-    id SMALLINT PRIMARY KEY,
-    person_id UUID REFERENCES person(id),
-    role_id SMALLINT REFERENCES role(id),
+    id BIGINT PRIMARY KEY,
+    person_id BIGINT REFERENCES person(id),
+    role_id BIGINT REFERENCES role(id),
     UNIQUE(person_id, role_id)
 );
 
 CREATE TABLE loan (
-    id UUID PRIMARY KEY,
-    min_amount DECIMAL(19, 4) NOT NULL CHECK (min_amount > 0),
-    max_amount DECIMAL(19, 4) NOT NULL CHECK (max_amount > loan.min_amount),
-    min_duration_months SMALLINT NOT NULL CHECK (min_duration_months > 0),
-    max_duration_months SMALLINT NOT NULL CHECK (max_duration_months > loan.min_duration_months),
+    id BIGINT PRIMARY KEY,
+    min_amount DECIMAL(19, 4) NOT NULL,
+    max_amount DECIMAL(19, 4) NOT NULL,
+    min_duration_months SMALLINT NOT NULL,
+    max_duration_months SMALLINT NOT NULL,
     interest_rate REAL CHECK(interest_rate >= 0 AND interest_rate <= 100)
 );
 
 CREATE TABLE loan_case (
-    id UUID PRIMARY KEY,
-    client_id UUID REFERENCES person(id),
-    loan_id UUID REFERENCES loan(id),
+    id BIGINT PRIMARY KEY,
+    client_id BIGINT REFERENCES person(id),
+    loan_id BIGINT REFERENCES loan(id),
     amount DECIMAL(19, 4) NOT NULL CHECK (amount > 0),
     duration_months SMALLINT NOT NULL CHECK (duration_months > 0),
     status_bank_side VARCHAR(8) DEFAULT 'PENDING',
@@ -43,8 +43,8 @@ CREATE TABLE loan_case (
 );
 
 CREATE TABLE payment (
-    id UUID PRIMARY KEY,
-    loan_case_id UUID REFERENCES loan_case(id),
+    id BIGINT PRIMARY KEY,
+    loan_case_id BIGINT REFERENCES loan_case(id),
     order_number SMALLINT NOT NULL CHECK (order_number > 0),
     date DATE NULL,
     amount DECIMAL(19, 4) NOT NULL CHECK (amount > 0),

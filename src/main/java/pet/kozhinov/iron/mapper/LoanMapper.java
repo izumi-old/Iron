@@ -5,13 +5,11 @@ import pet.kozhinov.iron.entity.Loan;
 import pet.kozhinov.iron.entity.dto.LoanDto;
 import pet.kozhinov.iron.utils.AccurateNumber;
 
-import java.util.UUID;
-
 @Component
 public class LoanMapper {
     public Loan fromDto(LoanDto dto) {
         Loan loan = new Loan();
-        loan.setId(UUID.fromString(dto.getId()));
+        loan.setId(Long.parseLong(dto.getId()));
         if (dto.getInterestRate() != null) {
             loan.setInterestRate(dto.getInterestRate());
         }

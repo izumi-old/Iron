@@ -5,10 +5,9 @@ import org.springframework.stereotype.Repository;
 import pet.kozhinov.iron.entity.Person;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
-public interface PersonRepository extends JpaRepository<Person, UUID> {
+public interface PersonRepository extends JpaRepository<Person, Long> {
     Optional<Person> findByEmail(String email);
     Optional<Person> findByPhoneNumber(String phoneNumber);
 }

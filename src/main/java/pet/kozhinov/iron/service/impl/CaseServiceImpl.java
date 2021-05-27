@@ -2,13 +2,13 @@ package pet.kozhinov.iron.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pet.kozhinov.iron.entity.LoanCase;
+import pet.kozhinov.iron.entity.Case;
 import pet.kozhinov.iron.entity.Status;
-import pet.kozhinov.iron.entity.dto.LoanCaseDto;
+import pet.kozhinov.iron.entity.dto.CaseDto;
 import pet.kozhinov.iron.exception.NotFoundException;
-import pet.kozhinov.iron.mapper.LoanCaseMapper;
-import pet.kozhinov.iron.repository.LoanCaseRepository;
-import pet.kozhinov.iron.service.LoanCaseService;
+import pet.kozhinov.iron.mapper.CaseMapper;
+import pet.kozhinov.iron.repository.CaseRepository;
+import pet.kozhinov.iron.service.CaseService;
 import pet.kozhinov.iron.service.PaymentsService;
 import pet.kozhinov.iron.utils.ValidationUtils;
 
@@ -21,71 +21,67 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static pet.kozhinov.iron.utils.Constants.ANNUITY_COEFFICIENT;
-import static pet.kozhinov.iron.utils.Constants.MAX_PERCENTS;
-import static pet.kozhinov.iron.utils.Constants.MONTHS_IN_YEAR;
-
 @RequiredArgsConstructor
 @Service
-public class LoanCaseServiceImpl implements LoanCaseService {
-    private final LoanCaseRepository repository;
-    private final LoanCaseMapper mapper;
+public class CaseServiceImpl implements CaseService {
+    private final CaseRepository repository;
+    private final CaseMapper mapper;
     private final PaymentsService paymentsService;
 
     @Override
-    public Collection<LoanCaseDto> getAllPending() {
-        Collection<LoanCaseDto> result = new LinkedList<>();
+    public Collection<CaseDto> getAllPending() {
+        Collection<CaseDto> result = new LinkedList<>();
         result.addAll(repository.findAllByStatusBankSideAndStatusClientSideAndClosed(
                         Status.PENDING, Status.APPROVED, false).stream()
-                .map(mapper::toDto)
+                .map(mapper::map1)
                 .collect(Collectors.toList()));
         result.addAll(repository.findAllByStatusBankSideAndStatusClientSideAndClosed(
                         Status.APPROVED, Status.PENDING, false).stream()
-                .map(mapper::toDto)
+                .map(mapper::map1)
                 .collect(Collectors.toList()));
         return result;
     }
 
     @Override
-    public Collection<LoanCaseDto> getAllAcceptedInProgress() {
+    public Collection<CaseDto> getAllAcceptedInProgress() {
         return repository.findAllByStatusBankSideAndStatusClientSideAndClosed(
                 Status.APPROVED, Status.APPROVED, false).stream()
-                .map(mapper::toDto)
+                .map(mapper::map1)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Collection<LoanCaseDto> getAllPendingForClient(@NotBlank String clientId) {
-        UUID id = UUID.fromString(clientId);
-        Collection<LoanCaseDto> result = new LinkedList<>();
+    public Collection<CaseDto> getAllPendingForClient(@NotBlank String clientId) {
+        Long id = Long.parseLong(clientId);
+        Collection<CaseDto> result = new LinkedList<>();
         result.addAll(repository.findAllByClientIdAndStatusBankSideAndStatusClientSide(
                 id, Status.PENDING, Status.APPROVED).stream()
-                .map(mapper::toDto)
+                .map(mapper::map1)
                 .collect(Collectors.toList()));
         result.addAll(repository.findAllByClientIdAndStatusBankSideAndStatusClientSide(
                 id, Status.APPROVED, Status.PENDING).stream()
-                .map(mapper::toDto)
+                .map(mapper::map1)
                 .collect(Collectors.toList()));
         return result;
     }
 
     @Override
-    public Collection<LoanCaseDto> getAllAcceptedForClient(@NotBlank String clientId) {
+    public Collection<CaseDto> getAllAcceptedForClient(@NotBlank String clientId) {
         return repository.findAllByClientIdAndStatusBankSideAndStatusClientSide(
-                UUID.fromString(clientId), Status.APPROVED, Status.APPROVED).stream()
-                .map(mapper::toDto)
+                Long.parseLong(clientId), Status.APPROVED, Status.APPROVED).stream()
+                .map(mapper::map1)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<LoanCaseDto> getById(@NotBlank String id) {
-        return repository.findById(UUID.fromString(id)).map(mapper::toDto);
+    public Optional<CaseDto> getById(@NotBlank String id) {
+        return repository.findById(Long.parseLong(id)).map(mapper::map1);
     }
 
     @Override
-    public LoanCaseDto update(@NotBlank String id, LoanCaseDto loanCase) {
-        UUID uId = UUID.fromString(id);
-        LoanCase toUpdate = repository.findById(uId)
+    public CaseDto update(@NotBlank String id, CaseDto loanCase) {
+        Long uId = Long.parseLong(id);
+        Case toUpdate = repository.findById(uId)
                 .orElseThrow(NotFoundException::new);
 
         if (loanCase.getStatusBankSide() != null) {
@@ -102,20 +98,20 @@ public class LoanCaseServiceImpl implements LoanCaseService {
 
         ValidationUtils.validate(toUpdate);
 
-        return mapper.toDto(repository.save(toUpdate));
+        return mapper.map1(repository.save(toUpdate));
     }
 
     @Override
-    public LoanCaseDto save(LoanCaseDto loanOffer) {
-        LoanCase toSave = mapper.fromDto(loanOffer);
+    public CaseDto save(CaseDto loanOffer) {
+        Case toSave = mapper.map2(loanOffer);
         toSave.setPayments(paymentsService.schedule(toSave));
         ValidationUtils.validate(toSave);
-        return mapper.toDto(repository.save(toSave));
+        return mapper.map1(repository.save(toSave));
     }
 
     @Override
     public void delete(@NotBlank String id) {
-        repository.deleteById(UUID.fromString(id));
+        repository.deleteById(Long.parseLong(id));
     }
 
     private static LocalDate addMonths(LocalDate to, int howMuch) {

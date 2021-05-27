@@ -1,12 +1,13 @@
 package pet.kozhinov.iron.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -17,21 +18,23 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Set;
-import java.util.UUID;
 
 @Data
-@Table
+@Table(name = "person")
 @Entity
 public class Person {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
 
+    @GeneratedValue
+    @Id
+    private Long id;
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "person_role",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+            joinColumns = @JoinColumn(name = "person_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles;
 
     @NotEmpty
@@ -52,7 +55,7 @@ public class Person {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Pattern(regexp = "\\+7\\(\\d\\d\\d\\)\\d\\d\\d-\\dd-\\d\\d") /* like +7(123)456-78-90 */
+    @Pattern(regexp = "\\+7\\(\\d\\d\\d\\)\\d\\d\\d-\\d\\d-\\d\\d") /* like +7(123)456-78-90 */
     @Column(unique = true)
     private String phoneNumber;
 

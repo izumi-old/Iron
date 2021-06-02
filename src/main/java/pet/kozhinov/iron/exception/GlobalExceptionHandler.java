@@ -5,6 +5,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,7 +29,8 @@ import static pet.kozhinov.iron.utils.Constants.HANDLER_TIMESTAMP_PARAMETER;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({BadRequestException.class, ValidationException.class, javax.validation.ValidationException.class})
+    @ExceptionHandler({BadRequestException.class, ValidationException.class,
+            javax.validation.ValidationException.class})
     public ResponseEntity<Object> handleBadRequestException(RuntimeException ex) {
         return simpleHandleException(HttpStatus.BAD_REQUEST, "Bad request", ex);
     }
@@ -38,13 +40,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return simpleHandleException(HttpStatus.NOT_FOUND, "Not found", ex);
     }
 
-    @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<Object> handleForbiddenException(ForbiddenException ex) {
+    @ExceptionHandler({ForbiddenException.class, AccessDeniedException.class})
+    public ResponseEntity<Object> handleForbiddenException(RuntimeException ex) {
         return simpleHandleException(HttpStatus.FORBIDDEN, "Forbidden", ex);
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Object> handleAllUncaughtException(RuntimeException ex) {
+    public ResponseEntity<Object> handleAllUncaughtException() {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put(HANDLER_TIMESTAMP_PARAMETER, LocalDateTime.now());
 

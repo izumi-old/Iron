@@ -1,5 +1,6 @@
 package pet.kozhinov.iron.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import pet.kozhinov.iron.entity.Payment;
@@ -39,6 +40,7 @@ public class CaseDto {
     private String statusClientSide;
     private LocalDate confirmationDate;
 
+    @JsonIgnore
     private Person client;
     private LoanDto loan;
     private Boolean closed;

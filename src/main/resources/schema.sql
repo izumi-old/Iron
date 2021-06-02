@@ -1,28 +1,28 @@
 CREATE TABLE role (
-    id BIGINT PRIMARY KEY,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(64) NOT NULL UNIQUE
 );
 
 CREATE TABLE person (
-    id BIGINT PRIMARY KEY,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(64) NOT NULL,
     last_name VARCHAR(64) NOT NULL,
     patronymic VARCHAR(64) NULL,
-    email VARCHAR(64) NOT NULL UNIQUE,
+    email VARCHAR(64) NULL UNIQUE,
     phone_number CHAR(16) NULL UNIQUE,
     password VARCHAR(256) NOT NULL,
     passport_number_and_series CHAR(11) NOT NULL UNIQUE
 );
 
 CREATE TABLE person_role (
-    id BIGINT PRIMARY KEY,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     person_id BIGINT REFERENCES person(id),
     role_id BIGINT REFERENCES role(id),
     UNIQUE(person_id, role_id)
 );
 
 CREATE TABLE loan (
-    id BIGINT PRIMARY KEY,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     min_amount DECIMAL(19, 4) NOT NULL,
     max_amount DECIMAL(19, 4) NOT NULL,
     min_duration_months SMALLINT NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE loan (
 );
 
 CREATE TABLE loan_case (
-    id BIGINT PRIMARY KEY,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     client_id BIGINT REFERENCES person(id),
     loan_id BIGINT REFERENCES loan(id),
     amount DECIMAL(19, 4) NOT NULL CHECK (amount > 0),
@@ -43,7 +43,7 @@ CREATE TABLE loan_case (
 );
 
 CREATE TABLE payment (
-    id BIGINT PRIMARY KEY,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     loan_case_id BIGINT REFERENCES loan_case(id),
     order_number SMALLINT NOT NULL CHECK (order_number > 0),
     date DATE NULL,

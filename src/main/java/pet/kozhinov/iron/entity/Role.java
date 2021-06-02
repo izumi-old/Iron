@@ -13,12 +13,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.util.Set;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Data
 @Table(name = "role")
 @Entity
 public class Role implements GrantedAuthority {
 
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     @Id
     private Long id;
 

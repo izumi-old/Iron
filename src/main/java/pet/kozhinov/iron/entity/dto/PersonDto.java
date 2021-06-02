@@ -23,6 +23,7 @@ public class PersonDto {
     @NotBlank
     private String lastName;
     private String patronymic;
+    private String passportNumberAndSeries;
 
     @NotBlank
     public String getUsername() {

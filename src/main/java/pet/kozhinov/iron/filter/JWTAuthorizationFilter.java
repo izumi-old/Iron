@@ -2,11 +2,15 @@ package pet.kozhinov.iron.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import pet.kozhinov.iron.entity.Person;
+import pet.kozhinov.iron.entity.security.PersonDetails;
 import pet.kozhinov.iron.exception.AuthorizationException;
 import pet.kozhinov.iron.exception.InternalServerErrorException;
 import pet.kozhinov.iron.service.PersonService;
@@ -17,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import static pet.kozhinov.iron.utils.Constants.SECURITY_HEADER_STRING;
 import static pet.kozhinov.iron.utils.Constants.SECURITY_SECRET;
@@ -38,7 +43,12 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                 chain.doFilter(request, response);
                 return;
             }
-            UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
+
+            String username = getUsername(header);
+            Person person = personService.getByLogin(username)
+                    .orElseThrow(() -> new InternalServerErrorException("Person by login wasn't found, but it was expected"));
+
+            Authentication authentication = getAuthentication(person);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
         } catch (IOException | ServletException e) {
@@ -46,19 +56,18 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         }
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader(SECURITY_HEADER_STRING);
-        if (token == null ) {
-            return null;
-        }
+    private AbstractAuthenticationToken getAuthentication(Person person) {
+        Object principal = person.getLogin();
+        Object credentials = person.getPassword();
+        Collection<? extends GrantedAuthority> authorities = person.getRoles();
+        AbstractAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(principal, credentials, authorities);
+        authentication.setDetails(new PersonDetails(person));
 
-        String username = parseToken(token);
-        Person person = personService.getByLogin(username)
-                .orElseThrow(() -> new InternalServerErrorException("Person by login wasn't found, but it expected"));
-        return new UsernamePasswordAuthenticationToken(person, null, person.getRoles());
+        return authentication;
     }
 
-    private String parseToken(String token) {
+    private String getUsername(String token) {
         return JWT.require(Algorithm.HMAC512(SECURITY_SECRET.getBytes()))
                 .build()
                 .verify(token.replace(SECURITY_TOKEN_PREFIX, ""))

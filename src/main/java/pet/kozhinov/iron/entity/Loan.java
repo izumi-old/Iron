@@ -12,12 +12,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Data
 @Table(name = "loan")
 @Entity
 public class Loan {
 
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     @Id
     private Long id;
 

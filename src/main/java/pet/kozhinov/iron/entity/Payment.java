@@ -12,12 +12,14 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Data
 @Table(name = "payment")
 @Entity
 public class Payment {
 
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     @Id
     private Long id;
 

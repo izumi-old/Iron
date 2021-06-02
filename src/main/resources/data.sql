@@ -1,8 +1,8 @@
 INSERT INTO role(id, name)
-VALUES (1, 'CLIENT'),
-       (2, 'MANAGER'),
-       (3, 'ADMIN'),
-       (4, 'OWNER');
+VALUES (1, 'ROLE_CLIENT'),
+       (2, 'ROLE_MANAGER'),
+       (3, 'ROLE_ADMIN'),
+       (4, 'ROLE_OWNER');
 
 INSERT INTO person(id, first_name, last_name, patronymic, email, password, passport_number_and_series)
 VALUES (1, 'Alex', 'Cord', null, 'cord.alex@gmail.com',

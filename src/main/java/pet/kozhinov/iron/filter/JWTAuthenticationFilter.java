@@ -25,6 +25,7 @@ import static pet.kozhinov.iron.utils.Constants.SECURITY_SECRET;
 import static pet.kozhinov.iron.utils.Constants.SECURITY_TOKEN_PREFIX;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
     private final AuthenticationManager authenticationManager;
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
@@ -36,8 +37,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
         try {
-            PersonDto creds = new ObjectMapper()
-                    .readValue(request.getInputStream(), PersonDto.class);
+            PersonDto creds = objectMapper.readValue(request.getInputStream(), PersonDto.class);
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             creds.getUsername(),
@@ -52,9 +52,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain chain, Authentication auth) {
+        User currentUser = (User) auth.getPrincipal();
+        Date expiresAt = new Date(System.currentTimeMillis() + SECURITY_EXPIRATION_TIME_MILLISECONDS);
+
         String token = JWT.create()
-                .withSubject(((User) auth.getPrincipal()).getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + SECURITY_EXPIRATION_TIME_MILLISECONDS))
+                .withSubject(currentUser.getUsername())
+                .withExpiresAt(expiresAt)
                 .sign(Algorithm.HMAC512(SECURITY_SECRET.getBytes()));
         response.addHeader(SECURITY_HEADER_STRING, SECURITY_TOKEN_PREFIX + token);
     }

@@ -3,6 +3,7 @@ package pet.kozhinov.iron.controller.rest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -30,11 +31,13 @@ public class CaseController {
     public static final String NAME = "iron_CaseController";
     private final CaseService caseService;
 
+    @PreAuthorize("hasAnyRole('MANAGER, ADMIN')")
     @PostMapping(value = "/case")
     public CaseDto create(@RequestBody CaseDto dto) {
         return caseService.save(dto);
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER, ADMIN')")
     @GetMapping("/cases")
     public Page<CaseDto> getAll(@RequestParam(required = false) Integer page,
                                 @RequestParam(required = false) Integer size) {
@@ -47,8 +50,9 @@ public class CaseController {
         return caseService.getAll(page, size);
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER, ADMIN')")
     @GetMapping("/cases/filtered")
-    public Page<CaseDto> getAll(@RequestParam(required = false) Integer page,
+    public Page<CaseDto> getAllFiltered(@RequestParam(required = false) Integer page,
                                 @RequestParam(required = false) Integer size,
                                 @RequestParam String filterStatus) {
         validatePagination(page, size);
@@ -65,6 +69,7 @@ public class CaseController {
         return caseService.update(toUpdate);
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER, ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@NotBlank @PathVariable String id) {

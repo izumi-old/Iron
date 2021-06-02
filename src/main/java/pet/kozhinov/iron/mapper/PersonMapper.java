@@ -17,6 +17,7 @@ public class PersonMapper implements Mapper<Person, PersonDto> {
         dto.setFirstName(from.getFirstName());
         dto.setLastName(from.getLastName());
         dto.setPatronymic(from.getPatronymic());
+        dto.setPassportNumberAndSeries(from.getPassportNumberAndSeries());
         return dto;
     }
 
@@ -30,6 +31,7 @@ public class PersonMapper implements Mapper<Person, PersonDto> {
         person.setPhoneNumber(to.getPhoneNumber());
         person.setPassword(to.getPassword());
         person.setPatronymic(to.getPatronymic());
+        person.setPassportNumberAndSeries(to.getPassportNumberAndSeries());
         return person;
     }
 }

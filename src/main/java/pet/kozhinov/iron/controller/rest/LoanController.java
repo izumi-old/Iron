@@ -21,8 +21,8 @@ public class LoanController {
     private final LoanService loanService;
 
     @GetMapping("/loans")
-    public Page<LoanDto> getAll(@RequestParam Integer page,
-                                @RequestParam Integer size) {
+    public Page<LoanDto> getAll(@RequestParam(required = false) Integer page,
+                                @RequestParam(required = false) Integer size) {
         validatePagination(page, size);
         boolean noPagination = page == null;
         if (noPagination) {

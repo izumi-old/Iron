@@ -4,27 +4,21 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Data
 @Table(name = "person")
 @Entity
 public class Person {
 
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     @Id
     private Long id;
 
@@ -67,4 +61,9 @@ public class Person {
     @Pattern(regexp = "\\d\\d\\d\\d \\d\\d\\d\\d\\d\\d") /* like 1234 567890 */
     @Column(nullable = false, unique = true)
     private String passportNumberAndSeries;
+
+    @Transient
+    public String getLogin() {
+        return email != null ? email : phoneNumber;
+    }
 }

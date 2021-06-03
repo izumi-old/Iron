@@ -8,6 +8,7 @@ public final class Constants {
     public static final String API_SIGNUP_URL = API_PREFIX + "/person";
     public static final String API_LOGOUT_URL = API_PREFIX + "/logout";
     public static final String CURRENT_PERSON_KEYWORD = "current";
+    public static final String FRONTEND_ORIGIN = "http://localhost:3000";
 
     public static final long SECURITY_EXPIRATION_TIME_HOURS = 240;
     public static final long SECURITY_EXPIRATION_TIME_MILLISECONDS = SECURITY_EXPIRATION_TIME_HOURS * 3600 * 1000;

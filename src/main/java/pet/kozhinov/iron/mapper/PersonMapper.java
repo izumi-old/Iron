@@ -2,7 +2,10 @@ package pet.kozhinov.iron.mapper;
 
 import org.springframework.stereotype.Component;
 import pet.kozhinov.iron.entity.Person;
+import pet.kozhinov.iron.entity.Role;
 import pet.kozhinov.iron.entity.dto.PersonDto;
+
+import java.util.stream.Collectors;
 
 @Component(PersonMapper.NAME)
 public class PersonMapper implements Mapper<Person, PersonDto> {
@@ -18,6 +21,9 @@ public class PersonMapper implements Mapper<Person, PersonDto> {
         dto.setLastName(from.getLastName());
         dto.setPatronymic(from.getPatronymic());
         dto.setPassportNumberAndSeries(from.getPassportNumberAndSeries());
+        dto.setRoles(from.getRoles().stream()
+                .map(Role::getAuthority)
+                .collect(Collectors.toSet()));
         return dto;
     }
 

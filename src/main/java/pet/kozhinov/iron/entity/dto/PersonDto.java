@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Collection;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
@@ -24,6 +25,9 @@ public class PersonDto {
     private String lastName;
     private String patronymic;
     private String passportNumberAndSeries;
+
+    @JsonIgnoreProperties(allowGetters = true)
+    private Collection<String> roles;
 
     @NotBlank
     public String getUsername() {

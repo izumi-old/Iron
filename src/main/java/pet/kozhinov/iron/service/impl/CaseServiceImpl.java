@@ -7,11 +7,16 @@ import org.springframework.stereotype.Service;
 import pet.kozhinov.iron.entity.Case;
 import pet.kozhinov.iron.entity.Status;
 import pet.kozhinov.iron.entity.dto.CaseDto;
+import pet.kozhinov.iron.entity.notification.email.CaseConfirmedNotification;
+import pet.kozhinov.iron.entity.notification.email.Email;
+import pet.kozhinov.iron.entity.notification.email.NewLoanCaseNotification;
 import pet.kozhinov.iron.exception.NotFoundException;
 import pet.kozhinov.iron.mapper.CaseMapper;
 import pet.kozhinov.iron.repository.CaseRepository;
 import pet.kozhinov.iron.service.CaseService;
+import pet.kozhinov.iron.service.NotificationService;
 import pet.kozhinov.iron.service.PaymentsService;
+import pet.kozhinov.iron.service.PersonService;
 import pet.kozhinov.iron.utils.AccurateNumber;
 import pet.kozhinov.iron.utils.ValidationUtils;
 
@@ -33,6 +38,8 @@ public class CaseServiceImpl implements CaseService {
     private final CaseRepository repository;
     private final CaseMapper mapper;
     private final PaymentsService paymentsService;
+    private final NotificationService<Email> emailNotificationService;
+    private final PersonService personService;
 
     private static LocalDate addMonths(LocalDate to, int howMuch) {
         return ChronoUnit.MONTHS.addTo(to, howMuch);
@@ -150,17 +157,35 @@ public class CaseServiceImpl implements CaseService {
                 fromDb.getPayments().forEach(payment -> payment.setDate(addMonths(now, payment.getOrderNumber())));
             }
         }
+
         ValidationUtils.validate(fromDb);
 
-        return mapper.map1(repository.save(fromDb));
+        CaseDto updated = mapper.map1(repository.save(fromDb));
+        if (confirmed) {
+            String clientEmail = fromDb.getClient().getEmail();
+            if (clientEmail != null) {
+                emailNotificationService.sendAsynchronous(new CaseConfirmedNotification(clientEmail));
+            }
+        }
+
+        return updated;
     }
 
     @Override
     public CaseDto save(CaseDto loanOffer) {
         Case toSave = mapper.map2(loanOffer);
         toSave.setPayments(paymentsService.schedule(toSave));
+        toSave.setStatusBankSide(Status.PENDING);
+        toSave.setStatusClientSide(Status.PENDING);
         ValidationUtils.validate(toSave);
-        return mapper.map1(repository.save(toSave));
+        CaseDto saved = mapper.map1(repository.save(toSave));
+
+        personService.getById(loanOffer.getClientId())
+            .ifPresent(personDto -> {
+                String clientEmail = personDto.getEmail();
+                emailNotificationService.sendAsynchronous(new NewLoanCaseNotification(clientEmail));
+            });
+        return saved;
     }
 
     @Override

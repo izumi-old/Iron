@@ -15,10 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.validation.ValidationException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pet.kozhinov.iron.utils.Constants.HANDLER_ERRORS_PARAMETER;
@@ -46,7 +43,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Object> handleAllUncaughtException() {
+    public ResponseEntity<Object> handleAllUncaughtException(RuntimeException ex) {
+        log.error(ex.getMessage());
+
         Map<String, Object> body = new LinkedHashMap<>();
         body.put(HANDLER_TIMESTAMP_PARAMETER, LocalDateTime.now());
 
@@ -74,10 +73,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<Object> simpleHandleException(HttpStatus status, String message, RuntimeException ex) {
-        log.error(ex.getMessage());
-        List<String> details = new ArrayList<>();
-        details.add(ex.getLocalizedMessage());
-        ErrorResponse error = new ErrorResponse(message, details);
+        log.info("An expected exception on user behaviour: " + ex.getMessage());
+        ErrorResponse error = new ErrorResponse(message, Collections.singletonList(ex.getLocalizedMessage()));
         return new ResponseEntity<>(error, status);
     }
 }

@@ -50,8 +50,15 @@ public class CaseMapper implements Mapper<Case, CaseDto> {
         aCase.setPayments(new LinkedList<>());
         aCase.setAmount(accurateNumberConverter.convert2(dto.getAmount()));
         aCase.setDurationMonths(dto.getDurationMonths());
-        aCase.setStatusBankSide(Status.valueOf(dto.getStatusBankSide().toUpperCase()));
-        aCase.setStatusClientSide(Status.valueOf(dto.getStatusClientSide().toUpperCase()));
+
+        if (dto.getStatusBankSide() != null) {
+            aCase.setStatusBankSide(Status.valueOf(dto.getStatusBankSide().toUpperCase()));
+        }
+
+        if (dto.getStatusClientSide() != null) {
+            aCase.setStatusClientSide(Status.valueOf(dto.getStatusClientSide().toUpperCase()));
+        }
+
         aCase.setConfirmationDate(dto.getConfirmationDate());
         return aCase;
     }

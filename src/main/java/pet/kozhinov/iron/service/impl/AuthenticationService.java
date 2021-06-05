@@ -22,8 +22,8 @@ public class AuthenticationService implements UserDetailsService {
     public UserDetails loadUserByUsername(@NotNull String login) throws UsernameNotFoundException {
         log.debug("Loading person by login {{}}", login);
         try {
-            Person person = personService.getByEmail(login).orElseGet(
-                    () -> personService.getByPhoneNumber(login)
+            Person person = personService.getPersonByEmail(login).orElseGet(
+                    () -> personService.getPersonByPhoneNumber(login)
                             .orElseThrow(() -> new UsernameNotFoundException(
                                     String.format("Person with login %s wasn't found", login))));
             log.debug("The person was found");

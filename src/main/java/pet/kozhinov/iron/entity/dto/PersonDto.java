@@ -10,9 +10,6 @@ import java.util.Collection;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class PersonDto {
-    private String id;
-    private String email;
-    private String phoneNumber;
 
     @NotBlank
     @JsonIgnoreProperties(allowSetters = true)
@@ -23,11 +20,15 @@ public class PersonDto {
 
     @NotBlank
     private String lastName;
+
+    private String id;
+    private String email;
+    private String phoneNumber;
     private String patronymic;
-    private String passportNumberAndSeries;
+    private String passportSeriesAndNumber;
 
     @JsonIgnoreProperties(allowGetters = true)
-    private Collection<String> roles;
+    private Collection<RoleDto> roles;
 
     @NotBlank
     public String getUsername() {

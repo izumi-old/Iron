@@ -11,7 +11,7 @@ CREATE TABLE person (
     email VARCHAR(64) NULL UNIQUE,
     phone_number CHAR(16) NULL UNIQUE,
     password VARCHAR(256) NOT NULL,
-    passport_number_and_series CHAR(11) NOT NULL UNIQUE
+    passport_series_and_number CHAR(11) NOT NULL UNIQUE
 );
 
 CREATE TABLE person_role (

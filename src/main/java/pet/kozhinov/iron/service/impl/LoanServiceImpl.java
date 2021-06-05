@@ -2,15 +2,12 @@ package pet.kozhinov.iron.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pet.kozhinov.iron.entity.dto.LoanDto;
 import pet.kozhinov.iron.mapper.LoanMapper;
 import pet.kozhinov.iron.repository.LoanRepository;
 import pet.kozhinov.iron.service.LoanService;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service(LoanServiceImpl.NAME)
@@ -20,15 +17,8 @@ public class LoanServiceImpl implements LoanService {
     private final LoanMapper mapper;
 
     @Override
-    public Collection<LoanDto> getAll() {
-        return repository.findAll().stream()
-                .map(mapper::map1)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Page<LoanDto> getAll(int page, int size) {
-        return repository.findAll(PageRequest.of(page, size))
+    public Page<LoanDto> getLoans(Pageable pageable) {
+        return repository.findAll(pageable)
                 .map(mapper::map1);
     }
 }

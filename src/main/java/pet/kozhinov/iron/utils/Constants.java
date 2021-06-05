@@ -1,6 +1,7 @@
 package pet.kozhinov.iron.utils;
 
 public final class Constants {
+    public static final int DEFAULT_PAGE_SIZE = 1;
     public static final String API_PREFIX_V1 = "/iron/v1";
 
     public static final String API_PREFIX = API_PREFIX_V1;

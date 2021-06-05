@@ -2,7 +2,7 @@ package pet.kozhinov.iron.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pet.kozhinov.iron.entity.Case;
 import pet.kozhinov.iron.entity.Status;
@@ -20,16 +20,10 @@ import pet.kozhinov.iron.service.PersonService;
 import pet.kozhinov.iron.utils.AccurateNumber;
 import pet.kozhinov.iron.utils.ValidationUtils;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static pet.kozhinov.iron.entity.Status.APPROVED;
-import static pet.kozhinov.iron.utils.Utils.toPage;
 
 @RequiredArgsConstructor
 @Service(CaseServiceImpl.NAME)
@@ -46,87 +40,31 @@ public class CaseServiceImpl implements CaseService {
     }
 
     @Override
-    public Collection<CaseDto> getAll() {
-        return repository.findAll().stream()
-                .map(mapper::map1)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Collection<CaseDto> getAllPending() {
-        Collection<CaseDto> result = new LinkedList<>();
-        result.addAll(repository.findAllByStatusBankSideAndStatusClientSideAndClosed(
-                Status.PENDING, APPROVED, false).stream()
-                .map(mapper::map1)
-                .collect(Collectors.toList()));
-        result.addAll(repository.findAllByStatusBankSideAndStatusClientSideAndClosed(
-                APPROVED, Status.PENDING, false).stream()
-                .map(mapper::map1)
-                .collect(Collectors.toList()));
-
-        return result;
-    }
-
-    @Override
-    public Collection<CaseDto> getAllAcceptedInProgress() {
-        return repository.findAllByStatusBankSideAndStatusClientSideAndClosed(
-                APPROVED, APPROVED, false).stream()
-                .map(mapper::map1)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Collection<CaseDto> getAllPendingForClient(@NotBlank String clientId) {
-        Long id = Long.parseLong(clientId);
-        Collection<CaseDto> result = new LinkedList<>();
-        result.addAll(repository.findAllByClientIdAndStatusBankSideAndStatusClientSide(
-                id, Status.PENDING, APPROVED).stream()
-                .map(mapper::map1)
-                .collect(Collectors.toList()));
-        result.addAll(repository.findAllByClientIdAndStatusBankSideAndStatusClientSide(
-                id, APPROVED, Status.PENDING).stream()
-                .map(mapper::map1)
-                .collect(Collectors.toList()));
-        return result;
-    }
-
-    @Override
-    public Collection<CaseDto> getAllAcceptedForClient(@NotBlank String clientId) {
-        return repository.findAllByClientIdAndStatusBankSideAndStatusClientSide(
-                Long.parseLong(clientId), APPROVED, APPROVED).stream()
-                .map(mapper::map1)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Page<CaseDto> getAll(int page, int size) {
-        return repository.findAll(PageRequest.of(page, size))
+    public Page<CaseDto> getCases(Pageable pageable) {
+        return repository.findAll(pageable)
                 .map(mapper::map1);
     }
 
     @Override
-    public Page<CaseDto> getAllPending(int page, int size) {
-        return toPage(getAllPending(), page, size);
+    public Page<CaseDto> getCasesByPersonId(Pageable pageable, Long clientId) {
+        return repository.findAllByClientId(pageable, clientId)
+                .map(mapper::map1);
     }
 
     @Override
-    public Page<CaseDto> getAllAcceptedInProgress(int page, int size) {
-        return toPage(getAllAcceptedInProgress(), page, size);
+    public Page<CaseDto> getCasesByStatusesAndPersonId(Pageable pageable, Status bankStatus, Status clientStatus) {
+        return repository.findAllByStatusBankSideAndStatusClientSideAndClosed(
+                pageable, bankStatus, clientStatus, false)
+                .map(mapper::map1);
     }
 
     @Override
-    public Page<CaseDto> getAllPendingForClient(int page, int size, String clientId) {
-        return toPage(getAllPendingForClient(clientId), page, size);
-    }
-
-    @Override
-    public Page<CaseDto> getAllAcceptedForClient(int page, int size, String clientId) {
-        return toPage(getAllAcceptedForClient(clientId), page, size);
-    }
-
-    @Override
-    public Optional<CaseDto> getById(String id) {
-        return repository.findById(Long.parseLong(id))
+    public Page<CaseDto> getCasesByStatusesAndPersonId(Pageable pageable,
+                                                       Long personId,
+                                                       Status bankStatus,
+                                                       Status clientStatus) {
+        return repository.findAllByClientIdAndStatusBankSideAndStatusClientSide(
+                pageable, personId, bankStatus, clientStatus)
                 .map(mapper::map1);
     }
 
@@ -180,7 +118,7 @@ public class CaseServiceImpl implements CaseService {
         ValidationUtils.validate(toSave);
         CaseDto saved = mapper.map1(repository.save(toSave));
 
-        personService.getById(loanOffer.getClientId())
+        personService.getPersonById(loanOffer.getClientId())
             .ifPresent(personDto -> {
                 String clientEmail = personDto.getEmail();
                 emailNotificationService.sendAsynchronous(new NewLoanCaseNotification(clientEmail));

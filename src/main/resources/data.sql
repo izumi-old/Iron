@@ -4,7 +4,7 @@ VALUES (1, 'ROLE_CLIENT'),
        (3, 'ROLE_ADMIN'),
        (4, 'ROLE_OWNER');
 
-INSERT INTO person(id, first_name, last_name, patronymic, email, password, passport_number_and_series)
+INSERT INTO person(id, first_name, last_name, patronymic, email, password, passport_series_and_number)
 VALUES (1, 'Alex', 'Cord', null, 'cord.alex@gmail.com',
         '$2y$12$JbPo1bdZsKJ.mFY8G7tOHuHBGW17nqVqbOo8RwZbh.h1dFIR6cIEu', '8655 898006'),
        (2, 'Mike', 'Birdperson', 'Rickovich',

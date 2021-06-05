@@ -5,20 +5,25 @@ import org.springframework.stereotype.Component;
 import pet.kozhinov.iron.entity.Case;
 import pet.kozhinov.iron.entity.Status;
 import pet.kozhinov.iron.entity.dto.CaseDto;
-import pet.kozhinov.iron.exception.InternalServerErrorException;
+import pet.kozhinov.iron.exception.BadRequestException;
+import pet.kozhinov.iron.repository.CaseRepository;
 import pet.kozhinov.iron.repository.LoanRepository;
 import pet.kozhinov.iron.repository.PersonRepository;
 
 import java.util.LinkedList;
 
+import static pet.kozhinov.iron.utils.ValidationUtils.validateId;
+
 @RequiredArgsConstructor
 @Component(CaseMapper.NAME)
 public class CaseMapper implements Mapper<Case, CaseDto> {
     public static final String NAME = "iron_CaseMapper";
-    private final PersonRepository personRepository;
-    private final LoanRepository loanRepository;
     private final LoanMapper loanMapper;
     private final AccurateConverter accurateNumberConverter;
+
+    private final CaseRepository caseRepository;
+    private final PersonRepository personRepository;
+    private final LoanRepository loanRepository;
 
     @Override
     public CaseDto map1(Case aCase) {
@@ -33,7 +38,6 @@ public class CaseMapper implements Mapper<Case, CaseDto> {
         dto.setConfirmationDate(aCase.getConfirmationDate());
         dto.setClosed(aCase.isClosed());
 
-        dto.setClient(aCase.getClient());
         dto.setLoan(loanMapper.map1(aCase.getLoan()));
         dto.setPayments(aCase.getPayments());
         return dto;
@@ -41,13 +45,16 @@ public class CaseMapper implements Mapper<Case, CaseDto> {
 
     @Override
     public Case map2(CaseDto dto) {
-        Case aCase = new Case();
-        aCase.setId(Long.parseLong(dto.getLoanId()));
-        aCase.setClient(personRepository.findById(Long.parseLong(dto.getClientId()))
-                .orElseThrow(InternalServerErrorException::new));
-        aCase.setLoan(loanRepository.findById(Long.parseLong(dto.getLoanId()))
-                .orElseThrow(InternalServerErrorException::new));
-        aCase.setPayments(new LinkedList<>());
+        Case aCase;
+        if (dto.getId() == null) {
+            aCase = createNewOne(dto);
+        } else {
+            String id = dto.getId();
+            validateId(id);
+            aCase = caseRepository.findById(Long.parseLong(id))
+                .orElseThrow(() -> new BadRequestException("A case with given id wasn't found"));
+        }
+
         aCase.setAmount(accurateNumberConverter.convert2(dto.getAmount()));
         aCase.setDurationMonths(dto.getDurationMonths());
 
@@ -60,6 +67,28 @@ public class CaseMapper implements Mapper<Case, CaseDto> {
         }
 
         aCase.setConfirmationDate(dto.getConfirmationDate());
+        return aCase;
+    }
+
+    private Case createNewOne(CaseDto dto) {
+        Case aCase = new Case();
+        String clientId = dto.getClientId();
+        String loanId = dto.getLoanId();
+        if (clientId == null) {
+            throw new BadRequestException("Client is not specified");
+        }
+        if (loanId == null) {
+            throw new BadRequestException("Loan is not specified");
+        }
+
+        validateId(clientId);
+        validateId(loanId);
+        aCase.setClient(personRepository.findById(Long.parseLong(clientId))
+                .orElseThrow(() -> new BadRequestException("A client with given id wasn't found")));
+        aCase.setLoan(loanRepository.findById(Long.parseLong(loanId))
+                .orElseThrow(() -> new BadRequestException("A loan with given id wasn't found")));
+        aCase.setPayments(new LinkedList<>());
+
         return aCase;
     }
 }

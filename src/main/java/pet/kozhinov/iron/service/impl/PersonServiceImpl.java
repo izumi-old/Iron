@@ -2,7 +2,7 @@ package pet.kozhinov.iron.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pet.kozhinov.iron.entity.Person;
 import pet.kozhinov.iron.entity.Role;
@@ -10,9 +10,10 @@ import pet.kozhinov.iron.entity.dto.PersonDto;
 import pet.kozhinov.iron.mapper.Mapper;
 import pet.kozhinov.iron.repository.PersonRepository;
 import pet.kozhinov.iron.service.PersonService;
+import pet.kozhinov.iron.service.RoleService;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,7 @@ public class PersonServiceImpl implements PersonService {
     public static final String NAME = "iron_PersonServiceImpl";
     private final PersonRepository repository;
     private final Mapper<Person, PersonDto> mapper;
+    private final RoleService roleService;
 
     @Override
     public PersonDto signup(PersonDto personDto) {
@@ -33,63 +35,45 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Optional<PersonDto> getById(String id) {
+    public Optional<PersonDto> getPersonById(String id) {
         return repository.findById(Long.parseLong(id))
                 .map(mapper::map1);
     }
 
     @Override
-    public Optional<Person> getByLogin(String login) {
-        Optional<Person> optional = getByEmail(login);
+    public Optional<Person> getPersonByLogin(String login) {
+        Optional<Person> optional = getPersonByEmail(login);
         if (optional.isPresent()) {
             return optional;
         }
 
-        return getByPhoneNumber(login);
+        return getPersonByPhoneNumber(login);
     }
 
     @Override
-    public Optional<Person> getByEmail(String email) {
+    public Optional<Person> getPersonByEmail(String email) {
         return repository.findByEmail(email);
     }
 
     @Override
-    public Optional<Person> getByPhoneNumber(String phoneNumber) {
+    public Optional<Person> getPersonByPhoneNumber(String phoneNumber) {
         return repository.findByPhoneNumber(phoneNumber);
     }
 
     @Override
-    public Collection<PersonDto> getAll() {
-        return repository.findAll().stream()
-                .map(mapper::map1)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Collection<PersonDto> getAllByRole(String role) {
-        Collection<Person> result = new ArrayList<>();
-        repository.findAll().forEach(person -> {
-            for (Role role0 : person.getRoles()) {
-                if (role0.getName().equals(role)) {
-                    result.add(person);
-                    break;
-                }
-            }
-        });
-
-        return result.stream()
-                .map(mapper::map1)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Page<PersonDto> getAll(int page, int size) {
-        return repository.findAll(PageRequest.of(page, size))
+    public Page<PersonDto> getPersons(Pageable pageable) {
+        return repository.findAll(pageable)
                 .map(mapper::map1);
     }
 
     @Override
-    public Page<PersonDto> getAllByRole(int page, int size, String role) {
-        return toPage(getAllByRole(role), page, size);
+    public Page<PersonDto> getPersonsByRole(Pageable pageable, String role) {
+        Collection<Person> result = new LinkedList<>();
+        Collection<Role> roles = roleService.getRolesByRoleName(role);
+        roles.forEach(role0 -> result.addAll(repository.findAllByRolesContaining(role0)));
+
+        return toPage(result.stream()
+                .map(mapper::map1)
+                .collect(Collectors.toList()));
     }
 }

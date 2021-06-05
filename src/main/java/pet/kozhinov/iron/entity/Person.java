@@ -60,7 +60,7 @@ public class Person {
     @NotNull
     @Pattern(regexp = "\\d\\d\\d\\d \\d\\d\\d\\d\\d\\d") /* like 1234 567890 */
     @Column(nullable = false, unique = true)
-    private String passportNumberAndSeries;
+    private String passportSeriesAndNumber;
 
     @Transient
     public String getLogin() {

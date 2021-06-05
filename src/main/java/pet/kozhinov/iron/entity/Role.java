@@ -38,6 +38,18 @@ public class Role implements GrantedAuthority {
     }
 
     public enum Default {
-        CLIENT, MANAGER, ADMIN
+        CLIENT("ROLE_CLIENT"),
+        MANAGER("ROLE_MANAGER"),
+        ADMIN("ROLE_ADMIN"),
+        OWNER("ROLE_OWNER");
+        private final String name;
+
+        Default(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 }

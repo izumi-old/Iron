@@ -1,10 +1,8 @@
 package pet.kozhinov.iron.entity.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import pet.kozhinov.iron.entity.Payment;
-import pet.kozhinov.iron.entity.Person;
 import pet.kozhinov.iron.validation.ValidLoanCaseAmountRange;
 import pet.kozhinov.iron.validation.ValidLoanCaseDurationRange;
 
@@ -40,22 +38,13 @@ public class CaseDto {
     private String statusClientSide;
     private LocalDate confirmationDate;
 
-    @JsonIgnore
-    private Person client;
     private LoanDto loan;
     private Boolean closed;
     private Collection<Payment> payments;
 
-    public void setClient(Person client) {
-        if (client != null) {
-            clientId = client.getId().toString();
-        }
-        this.client = client;
-    }
-
     public void setLoan(LoanDto loan) {
         if (loan != null) {
-            loanId = loan.getId().toString();
+            loanId = loan.getId();
         }
         this.loan = loan;
     }

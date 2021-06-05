@@ -22,6 +22,10 @@ public final class SecurityUtils {
         return false;
     }
 
+    public static boolean hasRole(Role.Default role, Collection<? extends GrantedAuthority> authorities) {
+        return hasRole(role.getName(), authorities);
+    }
+
     public static boolean hasAnyRole(Collection<? extends GrantedAuthority> authorities, Role.Default... roles) {
         boolean result = false;
         for (Role.Default role : roles) {

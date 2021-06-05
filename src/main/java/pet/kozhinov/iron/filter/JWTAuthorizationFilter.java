@@ -45,7 +45,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             }
 
             String username = getUsername(header);
-            Person person = personService.getByLogin(username)
+            Person person = personService.getPersonByLogin(username)
                     .orElseThrow(() -> new InternalServerErrorException("Person by login wasn't found, but it was expected"));
 
             Authentication authentication = getAuthentication(person);

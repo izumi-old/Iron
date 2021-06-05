@@ -3,6 +3,7 @@ package pet.kozhinov.iron.mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pet.kozhinov.iron.entity.Case;
+import pet.kozhinov.iron.entity.Payment;
 import pet.kozhinov.iron.entity.Status;
 import pet.kozhinov.iron.entity.dto.CaseDto;
 import pet.kozhinov.iron.exception.BadRequestException;
@@ -10,7 +11,10 @@ import pet.kozhinov.iron.repository.CaseRepository;
 import pet.kozhinov.iron.repository.LoanRepository;
 import pet.kozhinov.iron.repository.PersonRepository;
 
+import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import static pet.kozhinov.iron.utils.ValidationUtils.validateId;
 
@@ -19,6 +23,7 @@ import static pet.kozhinov.iron.utils.ValidationUtils.validateId;
 public class CaseMapper implements Mapper<Case, CaseDto> {
     public static final String NAME = "iron_CaseMapper";
     private final LoanMapper loanMapper;
+    private final PaymentMapper paymentMapper;
     private final AccurateConverter accurateNumberConverter;
 
     private final CaseRepository caseRepository;
@@ -39,7 +44,12 @@ public class CaseMapper implements Mapper<Case, CaseDto> {
         dto.setClosed(aCase.isClosed());
 
         dto.setLoan(loanMapper.map1(aCase.getLoan()));
-        dto.setPayments(aCase.getPayments());
+        dto.setPayments(aCase.getPayments().stream()
+            .map(paymentMapper::map1)
+            .collect(Collectors.toSet()));
+
+        dto.setPaid(countPaid(aCase));
+
         return dto;
     }
 
@@ -90,5 +100,16 @@ public class CaseMapper implements Mapper<Case, CaseDto> {
         aCase.setPayments(new LinkedList<>());
 
         return aCase;
+    }
+
+    private BigDecimal countPaid(Case aCase) {
+        BigDecimal paid = BigDecimal.ZERO;
+        Collection<Payment> paidPayments = aCase.getPayments().stream()
+                .filter(Payment::isPaidOut)
+                .collect(Collectors.toList());
+        for (Payment payment : paidPayments) {
+            paid = paid.add(payment.getAmount());
+        }
+        return paid;
     }
 }

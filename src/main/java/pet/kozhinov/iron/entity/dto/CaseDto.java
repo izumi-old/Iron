@@ -1,8 +1,8 @@
 package pet.kozhinov.iron.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import pet.kozhinov.iron.entity.Payment;
 import pet.kozhinov.iron.validation.ValidLoanCaseAmountRange;
 import pet.kozhinov.iron.validation.ValidLoanCaseDurationRange;
 
@@ -31,6 +31,9 @@ public class CaseDto {
     @Positive
     private BigDecimal amount;
 
+    @JsonIgnoreProperties(allowGetters = true)
+    private BigDecimal paid;
+
     @Positive
     private Integer durationMonths;
 
@@ -40,7 +43,7 @@ public class CaseDto {
 
     private LoanDto loan;
     private Boolean closed;
-    private Collection<Payment> payments;
+    private Collection<PaymentDto> payments;
 
     public void setLoan(LoanDto loan) {
         if (loan != null) {

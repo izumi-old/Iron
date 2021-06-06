@@ -74,6 +74,12 @@ public class PersonServiceImpl implements PersonService {
 
         return toPage(result.stream()
                 .map(mapper::map1)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()), pageable);
+    }
+
+    @Override
+    public PersonDto update(PersonDto personDto) {
+        Person person = mapper.map2(personDto);
+        return mapper.map1(repository.save(person));
     }
 }

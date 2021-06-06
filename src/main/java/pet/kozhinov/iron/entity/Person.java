@@ -9,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -62,8 +63,17 @@ public class Person {
     @Column(nullable = false, unique = true)
     private String passportSeriesAndNumber;
 
+    @Column(columnDefinition = "BOOL DEFAULT false")
+    private Boolean banned = false;
+
+    private LocalDate latestSignInDate;
+
     @Transient
     public String getLogin() {
         return email != null ? email : phoneNumber;
+    }
+
+    public boolean isBanned() {
+        return banned;
     }
 }

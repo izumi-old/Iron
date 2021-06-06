@@ -11,7 +11,9 @@ CREATE TABLE person (
     email VARCHAR(64) NULL UNIQUE,
     phone_number CHAR(16) NULL UNIQUE,
     password VARCHAR(256) NOT NULL,
-    passport_series_and_number CHAR(11) NOT NULL UNIQUE
+    passport_series_and_number CHAR(11) NOT NULL UNIQUE,
+    banned BOOL DEFAULT false,
+    latest_sign_in_date DATE
 );
 
 CREATE TABLE person_role (

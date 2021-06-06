@@ -13,10 +13,10 @@ public class RoleMapper implements Mapper<Role, RoleDto> {
 
     @Override
     public RoleDto map1(Role from) {
-        return RoleDto.builder()
-                .id(from.getId().toString())
-                .name(from.getName().replace("ROLE_", ""))
-                .build();
+        RoleDto dto = new RoleDto();
+        dto.setId(from.getId().toString());
+        dto.setName(from.getName().replace("ROLE_", ""));
+        return dto;
     }
 
     @Override

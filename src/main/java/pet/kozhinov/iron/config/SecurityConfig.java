@@ -15,6 +15,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import pet.kozhinov.iron.filter.JWTAuthenticationFilter;
 import pet.kozhinov.iron.filter.JWTAuthorizationFilter;
+import pet.kozhinov.iron.repository.PersonRepository;
 import pet.kozhinov.iron.service.PersonService;
 import pet.kozhinov.iron.service.impl.AuthenticationService;
 
@@ -31,12 +32,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationService authenticationService;
     private final PersonService personService;
+    private final PersonRepository personRepository;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().cors().and()
             .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-            .addFilter(new JWTAuthorizationFilter(authenticationManager(), personService))
+            .addFilter(new JWTAuthorizationFilter(authenticationManager(), personService, personRepository))
         .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()

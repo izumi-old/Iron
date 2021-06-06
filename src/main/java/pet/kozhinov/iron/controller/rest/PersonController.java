@@ -5,7 +5,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import pet.kozhinov.iron.entity.dto.PersonDto;
 import pet.kozhinov.iron.entity.security.PersonDetails;
 import pet.kozhinov.iron.exception.ForbiddenException;
@@ -26,12 +33,12 @@ import static pet.kozhinov.iron.utils.SecurityUtils.hasRole;
 @RequiredArgsConstructor
 @RequestMapping(API_PREFIX)
 @RestController(PersonController.NAME)
-public class PersonController {
+public final class PersonController {
     public static final String NAME = "iron_PersonController";
     private final PersonService personService;
 
     @GetMapping("/person/{id}")
-    public PersonDto get(Authentication authentication,
+    public PersonDto get(final Authentication authentication,
                          @NotBlank @PathVariable String id) {
         PersonDetails current = ((PersonDetails) authentication.getDetails());
         if (id.equals(CURRENT_PERSON_KEYWORD)) {
@@ -46,26 +53,24 @@ public class PersonController {
 
     @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/person")
-    public PersonDto signup(@RequestBody @Valid PersonDto personDto) {
+    public PersonDto signup(final @RequestBody @Valid PersonDto personDto) {
         return personService.signup(personDto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/persons")
-    public Page<PersonDto> getPersons(@RequestParam Integer page,
-                                      @RequestParam(required = false) Integer size) {
-        if (size == null) {
-            size = DEFAULT_PAGE_SIZE;
-        }
-        return personService.getPersons(PageRequest.of(page, size));
+    public Page<PersonDto> getPersons(final @RequestParam Integer page,
+                                      final @RequestParam(required = false) Integer size) {
+        int guaranteedSize = size == null ? DEFAULT_PAGE_SIZE : size;
+        return personService.getPersons(PageRequest.of(page, guaranteedSize));
     }
 
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @GetMapping("/persons/filtered")
-    public Page<PersonDto> getPersonsFiltered(Authentication authentication,
+    public Page<PersonDto> getPersonsFiltered(final Authentication authentication,
                                               @RequestParam String role,
-                                              @RequestParam Integer page,
-                                              @RequestParam(required = false) Integer size) {
+                                              final @RequestParam Integer page,
+                                              final @RequestParam(required = false) Integer size) {
         role = role.toUpperCase();
         if (!role.contains("ROLE_")) {
             role = "ROLE_" + role;
@@ -78,10 +83,12 @@ public class PersonController {
             }
         }
 
-        if (size == null) {
-            size = DEFAULT_PAGE_SIZE;
-        }
+        int guaranteedSize = size == null ? DEFAULT_PAGE_SIZE : size;
+        return personService.getPersonsByRole(PageRequest.of(page, guaranteedSize), role);
+    }
 
-        return personService.getPersonsByRole(PageRequest.of(page, size), role);
+    @PatchMapping("/person")
+    public PersonDto update(final @RequestBody PersonDto personDto) {
+        return personService.update(personDto);
     }
 }

@@ -4,29 +4,29 @@ VALUES (1, 'ROLE_CLIENT'),
        (3, 'ROLE_ADMIN'),
        (4, 'ROLE_OWNER');
 
-INSERT INTO person(id, first_name, last_name, patronymic, email, password, passport_series_and_number)
+INSERT INTO person(id, first_name, last_name, patronymic, email, password, passport_series_and_number, latest_sign_in_date)
 VALUES (1, 'Alex', 'Cord', null, 'cord.alex@gmail.com',
-        '$2y$12$JbPo1bdZsKJ.mFY8G7tOHuHBGW17nqVqbOo8RwZbh.h1dFIR6cIEu', '8655 898006'),
-       (2, 'Mike', 'Birdperson', 'Rickovich',
-        'person.and.bird.and.more@gmail.com', '$2y$12$GcEI/UKzmZGJ/jkUtlyRKeP.FO24ur1ZtIZ3jxlwu94c6tTeeeBoO', '8655 898007'),
+        '$2y$12$JbPo1bdZsKJ.mFY8G7tOHuHBGW17nqVqbOo8RwZbh.h1dFIR6cIEu', '8655 898006', '2020-11-11'),
+       (2, 'Mike', 'Birdperson', 'Rickovich', 'person.and.bird.and.more@gmail.com',
+        '$2y$12$GcEI/UKzmZGJ/jkUtlyRKeP.FO24ur1ZtIZ3jxlwu94c6tTeeeBoO', '8655 898007', '2020-11-15'),
        (3, 'Bob', 'Stone', null, 'stobob@yandex.ru',
-        '$2y$12$InDYUCXK7h80d1yiEX0FUeH7xM1lz2d86YQ83x0cj0aAVRX.NzthK', '8655 898008'),
+        '$2y$12$InDYUCXK7h80d1yiEX0FUeH7xM1lz2d86YQ83x0cj0aAVRX.NzthK', '8655 898008', '2020-11-17'),
        (4, 'Savely', 'Litvinov', 'Igorevich', 'saliig@yandex.ru',
-        '$2y$12$O4Z1lZqGjgG3gZsUZWyhAOh.RgQFXSljKQ82eYKm/HMHuRdT9e5su', '8655 898009'),
+        '$2y$12$O4Z1lZqGjgG3gZsUZWyhAOh.RgQFXSljKQ82eYKm/HMHuRdT9e5su', '8655 898009', '2020-11-20'),
        (5, 'Maxim', 'Filippov', 'Vladimirovich', 'mafivl@yahoo.com',
-        '$2y$12$RpCWvU1iwWxBFtLoAIXON.zlWRDn7iLsZL.ghfItKiDkDqU92YiIm', '8655 898010'),
+        '$2y$12$RpCWvU1iwWxBFtLoAIXON.zlWRDn7iLsZL.ghfItKiDkDqU92YiIm', '8655 898010', '2020-11-20'),
        (6, 'Yulia', 'Egorova', 'Ivanovna', 'yuegiv@gmail.com',
-        '$2y$12$VY0IQA3clkSF5K4yokzaiuqoxgqF74mdBsGsoNiTNGd4Dlyha.2Jq', '8655 898011'),
+        '$2y$12$VY0IQA3clkSF5K4yokzaiuqoxgqF74mdBsGsoNiTNGd4Dlyha.2Jq', '8655 898011', '2020-11-20'),
        (7, 'Nikolay', 'Melnikov', 'Egorovich', 'nimeeg@yandex.ru',
-        '$2y$12$Si8qW/cI0CX9QhX6ZYoeMuZ9NzoEUgyd9kbRKXdJt6nfy/.KlGLV2', '8655 898012'),
+        '$2y$12$Si8qW/cI0CX9QhX6ZYoeMuZ9NzoEUgyd9kbRKXdJt6nfy/.KlGLV2', '8655 898012', '2020-11-20'),
        (8, 'Maria', 'Polyakova', 'Timofeevna', 'mapoti@mail.ru',
-        '$2y$12$tlH.3hl8beffXEq1IpjEyumxYrlKtWIpE3tZSy5qQGinQYanmrVEK', '8655 898013'),
+        '$2y$12$tlH.3hl8beffXEq1IpjEyumxYrlKtWIpE3tZSy5qQGinQYanmrVEK', '8655 898013', '2020-11-20'),
        (9, 'Ksenia', 'Popova', 'Mikhailovna', 'poksmi@mail.ru',
-        '$2y$12$lsNX4zLcOpmGLcU6s1Wk2uOthk46c7D87PBQcARCLR5sdcbcrr25u', '8655 898014'),
+        '$2y$12$lsNX4zLcOpmGLcU6s1Wk2uOthk46c7D87PBQcARCLR5sdcbcrr25u', '8655 898014', '2020-11-20'),
        (10, 'Adam', 'Ponomarev', 'Demidovich', 'adpode@mail.ru',
-        '$2y$12$KrSTkjVe1ZQYnU/4T8rcBu91YQ4UUa/lZiWL2nz8BAFCQLoidKShK', '8655 898015'),
+        '$2y$12$KrSTkjVe1ZQYnU/4T8rcBu91YQ4UUa/lZiWL2nz8BAFCQLoidKShK', '8655 898015', '2020-11-20'),
        (11, 'Senior', 'Kohan', null, 'kohan@gmail.com',
-        '$2y$12$nWylY3QtINR.k1DnYqrVT.jP2O56SnK.0gyji7SO.l0M4IXQxqRHC', '8655 898016');
+        '$2y$12$nWylY3QtINR.k1DnYqrVT.jP2O56SnK.0gyji7SO.l0M4IXQxqRHC', '8655 898016', '2020-11-20');
 
 INSERT INTO person_role(id, person_id, role_id)
 VALUES (1, 1, 1),

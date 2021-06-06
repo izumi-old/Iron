@@ -35,81 +35,76 @@ import static pet.kozhinov.iron.utils.ValidationUtils.validateId;
 @RequiredArgsConstructor
 @RequestMapping(API_PREFIX)
 @RestController(CaseController.NAME)
-public class CaseController {
+public final class CaseController {
     public static final String NAME = "iron_CaseController";
     private final CaseService caseService;
 
-    @PreAuthorize("hasAnyRole('MANAGER, ADMIN')")
-    @PostMapping(value = "/case")
-    public CaseDto create(@RequestBody CaseDto dto) {
+    @PreAuthorize("hasRole('MANAGER')")
+    @PostMapping("/case")
+    public CaseDto create(final @RequestBody CaseDto dto) {
         return caseService.save(dto);
     }
 
     @PreAuthorize("hasAnyRole('MANAGER, ADMIN')")
     @GetMapping("/cases")
-    public Page<CaseDto> getCases(@RequestParam Integer page,
-                                  @RequestParam(required = false) Integer size) {
-        if (size == null) {
-            size = DEFAULT_PAGE_SIZE;
-        }
-        return caseService.getCases(PageRequest.of(page, size));
+    public Page<CaseDto> getCases(final @RequestParam Integer page,
+                                  final @RequestParam(required = false) Integer size) {
+        int guaranteedSize = size == null ? DEFAULT_PAGE_SIZE : size;
+        return caseService.getCases(PageRequest.of(page, guaranteedSize));
     }
 
     @PreAuthorize("hasAnyRole('MANAGER, ADMIN')")
     @GetMapping("/cases/filtered")
-    public Page<CaseDto> getCasesFiltered(@RequestParam Integer page,
-                                        @RequestParam(required = false) Integer size,
-                                        @RequestParam String bankStatus,
-                                        @RequestParam String clientStatus) {
-        if (size == null) {
-            size = DEFAULT_PAGE_SIZE;
-        }
+    public Page<CaseDto> getCasesFiltered(final @RequestParam Integer page,
+                                          final @RequestParam(required = false) Integer size,
+                                          final @RequestParam String bankStatus,
+                                          final @RequestParam String clientStatus) {
+        int guaranteedSize = size == null ? DEFAULT_PAGE_SIZE : size;
         Status bankStatus0 = Status.valueOf(bankStatus.toUpperCase());
         Status clientStatus0 = Status.valueOf(clientStatus.toUpperCase());
-        return caseService.getCasesByStatusesAndPersonId(PageRequest.of(page, size), bankStatus0, clientStatus0);
+        return caseService.getCasesByStatusesAndPersonId(PageRequest.of(page, guaranteedSize),
+                bankStatus0, clientStatus0);
     }
 
     @GetMapping("persons/{personId}/cases")
-    public Page<CaseDto> getPersonCases(Authentication authentication,
-                                        @RequestParam Integer page,
-                                        @RequestParam(required = false) Integer size,
-                                        @PathVariable String personId) {
+    public Page<CaseDto> getPersonCases(final Authentication authentication,
+                                        final @RequestParam Integer page,
+                                        final @RequestParam(required = false) Integer size,
+                                        final @PathVariable String personId) {
         long personId0 = getPersonId0(authentication, personId);
-        if (size == null) {
-            size = DEFAULT_PAGE_SIZE;
-        }
-        return caseService.getCasesByPersonId(PageRequest.of(page, size), personId0);
+        int guaranteedSize = size == null ? DEFAULT_PAGE_SIZE : size;
+        return caseService.getCasesByPersonId(PageRequest.of(page, guaranteedSize), personId0);
     }
 
     @GetMapping("persons/{personId}/cases/filtered")
-    public Page<CaseDto> getPersonCasesFiltered(Authentication authentication,
-                                                @RequestParam Integer page,
-                                                @RequestParam(required = false) Integer size,
-                                                @PathVariable String personId,
-                                                @RequestParam String bankStatus,
-                                                @RequestParam String clientStatus) {
+    public Page<CaseDto> getPersonCasesFiltered(final Authentication authentication,
+                                                final @RequestParam Integer page,
+                                                final @RequestParam(required = false) Integer size,
+                                                final @PathVariable String personId,
+                                                final @RequestParam String bankStatus,
+                                                final @RequestParam String clientStatus) {
         long personId0 = getPersonId0(authentication, personId);
-        if (size == null) {
-            size = DEFAULT_PAGE_SIZE;
-        }
+        int guaranteedSize = size == null ? DEFAULT_PAGE_SIZE : size;
         Status bankStatus0 = Status.valueOf(bankStatus.toUpperCase());
         Status clientStatus0 = Status.valueOf(clientStatus.toUpperCase());
-        return caseService.getCasesByStatusesAndPersonId(PageRequest.of(page, size), personId0, bankStatus0, clientStatus0);
+        return caseService.getCasesByStatusesAndPersonId(PageRequest.of(page, guaranteedSize),
+                personId0, bankStatus0, clientStatus0);
     }
 
     @PatchMapping("/case")
-    public CaseDto update(CaseDto toUpdate) {
+    public CaseDto update(final @RequestBody CaseDto toUpdate) {
         return caseService.update(toUpdate);
     }
 
     @PreAuthorize("hasAnyRole('MANAGER, ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@NotBlank @PathVariable String id) {
+    public void delete(final @NotBlank @PathVariable String id) {
         caseService.delete(id);
     }
 
-    private long getPersonId0(Authentication authentication, @PathVariable String personId) {
+    private long getPersonId0(final Authentication authentication,
+                              final @PathVariable String personId) {
         PersonDetails current = ((PersonDetails) authentication.getDetails());
         long personId0;
         if (personId.equals(CURRENT_PERSON_KEYWORD)) {

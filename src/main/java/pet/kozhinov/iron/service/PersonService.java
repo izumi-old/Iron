@@ -22,4 +22,6 @@ public interface PersonService {
 
     Page<PersonDto> getPersons(@NotNull Pageable pageable);
     Page<PersonDto> getPersonsByRole(@NotNull Pageable pageable, @NotBlank String role);
+
+    PersonDto update(PersonDto personDto);
 }

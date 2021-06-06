@@ -65,18 +65,18 @@ public class CaseMapper implements Mapper<Case, CaseDto> {
                 .orElseThrow(() -> new BadRequestException("A case with given id wasn't found"));
         }
 
-        aCase.setAmount(accurateNumberConverter.convert2(dto.getAmount()));
-        aCase.setDurationMonths(dto.getDurationMonths());
-
+        if (dto.getAmount() != null) {
+            aCase.setAmount(accurateNumberConverter.convert2(dto.getAmount()));
+        }
+        if (dto.getDurationMonths() != null) {
+            aCase.setDurationMonths(dto.getDurationMonths());
+        }
         if (dto.getStatusBankSide() != null) {
             aCase.setStatusBankSide(Status.valueOf(dto.getStatusBankSide().toUpperCase()));
         }
-
         if (dto.getStatusClientSide() != null) {
             aCase.setStatusClientSide(Status.valueOf(dto.getStatusClientSide().toUpperCase()));
         }
-
-        aCase.setConfirmationDate(dto.getConfirmationDate());
         return aCase;
     }
 

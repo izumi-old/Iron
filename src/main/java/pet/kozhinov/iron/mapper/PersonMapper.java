@@ -30,6 +30,8 @@ public class PersonMapper implements Mapper<Person, PersonDto> {
         dto.setLastName(from.getLastName());
         dto.setPatronymic(from.getPatronymic());
         dto.setPassportSeriesAndNumber(from.getPassportSeriesAndNumber());
+        dto.setBanned(from.getBanned());
+        dto.setLatestSignInDate(from.getLatestSignInDate());
         dto.setRoles(from.getRoles().stream()
                 .map(roleMapper::map1)
                 .collect(Collectors.toSet()));
@@ -46,17 +48,33 @@ public class PersonMapper implements Mapper<Person, PersonDto> {
             validateId(to.getId());
 
             person = personRepository.findById(Long.parseLong(to.getId()))
-                    .orElseThrow(() -> new BadRequestException("Id is specified, but no entity with such id was found"));
+                .orElseThrow(() -> new BadRequestException("Id is specified, but no entity with such id was found"));
         }
 
-        person.setFirstName(to.getFirstName());
-        person.setLastName(to.getLastName());
-        person.setEmail(to.getEmail());
-        person.setPhoneNumber(to.getPhoneNumber());
-        person.setPassword(to.getPassword());
-        person.setPatronymic(to.getPatronymic());
-        person.setPassportSeriesAndNumber(to.getPassportSeriesAndNumber());
-
+        if (to.getFirstName() != null) {
+            person.setFirstName(to.getFirstName());
+        }
+        if (to.getLastName() != null) {
+            person.setLastName(to.getLastName());
+        }
+        if (to.getPatronymic() != null) {
+            person.setPatronymic(to.getPatronymic());
+        }
+        if (to.getEmail() != null) {
+            person.setEmail(to.getEmail());
+        }
+        if (to.getPhoneNumber() != null) {
+            person.setPhoneNumber(to.getPhoneNumber());
+        }
+        if (to.getPassword() != null) {
+            person.setPassword(to.getPassword());
+        }
+        if (to.getPassportSeriesAndNumber() != null) {
+            person.setPassportSeriesAndNumber(to.getPassportSeriesAndNumber());
+        }
+        if (to.getBanned() != null) {
+            person.setBanned(to.getBanned());
+        }
         return person;
     }
 }

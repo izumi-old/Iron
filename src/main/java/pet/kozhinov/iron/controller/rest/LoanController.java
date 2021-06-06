@@ -16,16 +16,14 @@ import static pet.kozhinov.iron.utils.Constants.DEFAULT_PAGE_SIZE;
 @RequiredArgsConstructor
 @RequestMapping(API_PREFIX)
 @RestController(LoanController.NAME)
-public class LoanController {
+public final class LoanController {
     public static final String NAME = "LoanController";
     private final LoanService loanService;
 
     @GetMapping("/loans")
-    public Page<LoanDto> getLoans(@RequestParam Integer page,
-                                  @RequestParam(required = false) Integer size) {
-        if (size == null) {
-            size = DEFAULT_PAGE_SIZE;
-        }
-        return loanService.getLoans(PageRequest.of(page, size));
+    public Page<LoanDto> getLoans(final @RequestParam Integer page,
+                                  final @RequestParam(required = false) Integer size) {
+        int guaranteedSize = size == null ? DEFAULT_PAGE_SIZE : size;
+        return loanService.getLoans(PageRequest.of(page, guaranteedSize));
     }
 }

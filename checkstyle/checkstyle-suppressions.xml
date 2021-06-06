@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD SuppressionFilter Configuration 1.0//EN"
+        "https://checkstyle.org/dtds/suppressions_1_0.dtd">
+
+<suppressions>
+    <suppress checks="JavadocStyleCheck"
+              files="."
+              lines="1-1000"/>
+    <suppress checks="JavadocVariable"
+              files="."
+              lines="1-1000"/>
+    <suppress checks="JavadocPackage"
+              files="."
+              lines="1-1000"/>
+    <suppress checks="MissingJavadocMethod"
+              files="."
+              lines="1-1000"/>
+</suppressions>

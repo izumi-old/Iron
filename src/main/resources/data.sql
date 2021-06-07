@@ -31,34 +31,34 @@ VALUES (1, 'Alex', 'Cord', null, 'cord.alex@gmail.com',
 INSERT INTO person_role(id, person_id, role_id)
 VALUES (1, 1, 1),
        (2, 2, 1),
-       (3, 2, 2),
-       (4, 3, 1),
-       (5, 3, 2),
-       (6, 3, 3),
-       (7, 3, 4),
-       (8, 4, 1),
-       (9, 5, 1),
-       (10, 6, 1),
-       (11, 7, 1),
-       (12, 8, 1),
-       (13, 9, 1),
-       (14, 10, 1),
-       (15, 11, 3);
+       (3, 3, 1),
+       (4, 3, 2),
+       (5, 3, 3),
+       (6, 4, 1),
+       (7, 4, 2),
+       (8, 5, 3),
+       (9, 6, 4),
+       (10, 7, 1),
+       (11, 8, 1),
+       (12, 9, 1),
+       (13, 10, 1),
+       (14, 11, 3);
 
 INSERT INTO loan(id, min_amount, max_amount, min_duration_months, max_duration_months, interest_rate)
 VALUES (1, 15000, 35000, 3, 30, 21),
        (2, 80000, 100000, 3, 30, 16),
        (3, 15000, 45000, 3, 30, 20);
 
-INSERT INTO loan_case(id, client_id, loan_id, amount, duration_months, status_bank_side, status_client_side,
-                      confirmation_date, closed)
-VALUES (1, 1, 1, 23000, 3, 'APPROVED', 'APPROVED', '2020-11-04', true),
-       (2, 2, 1, 20000, 3, 'APPROVED', 'APPROVED', '2020-03-18', false),
-       (3, 3, 2, 100000, 6, 'APPROVED', 'PENDING', null, false),
-       (4, 4, 2, 85000, 9, 'APPROVED', 'PENDING', null, false),
-       (5, 4, 3, 40000, 3, 'PENDING', 'APPROVED', null, false);
+INSERT INTO loan_case(id, client_id, creator_id, loan_id, amount, duration_months, status_bank_side,
+                      status_client_side, confirmation_date, closed)
+VALUES (1, 1, 4, 1, 23000, 3, 'APPROVED', 'APPROVED', '2020-11-04', true),
+       (2, 2, 3, 1, 20000, 3, 'APPROVED', 'APPROVED', '2020-03-18', false),
+       (3, 3, 4, 2, 100000, 6, 'APPROVED', 'PENDING', null, false),
+       (4, 4, 3, 2, 85000, 9, 'APPROVED', 'PENDING', null, false),
+       (5, 4, 3, 3, 40000, 3, 'PENDING', 'APPROVED', null, false);
 
-INSERT INTO payment(id, loan_case_id, order_number, date, amount, loan_repayment_amount, interest_repayment_amount, paid_out)
+INSERT INTO payment(id, loan_case_id, order_number, date, amount, loan_repayment_amount,
+                    interest_repayment_amount, paid_out)
 VALUES (1, 1, 1, '2020-04-04', 7936.55, 7534.05, 402.50, true),
        (2, 1, 2, '2020-05-04', 7936.55, 7665.90, 270.65, true),
        (3, 1, 3, '2020-06-04', 7936.55, 7800.05, 136.50, true),

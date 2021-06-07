@@ -16,7 +16,7 @@ import static pet.kozhinov.iron.utils.Constants.DEFAULT_PAGE_SIZE;
 @RequiredArgsConstructor
 @RequestMapping(API_PREFIX)
 @RestController(LoanController.NAME)
-public final class LoanController {
+public class LoanController {
     public static final String NAME = "LoanController";
     private final LoanService loanService;
 

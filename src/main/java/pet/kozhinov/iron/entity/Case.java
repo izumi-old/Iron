@@ -31,6 +31,10 @@ public class Case {
     @OneToOne(optional = false)
     private Person client;
 
+    @NotNull
+    @OneToOne(optional = false)
+    private Person creator;
+
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @NotNull

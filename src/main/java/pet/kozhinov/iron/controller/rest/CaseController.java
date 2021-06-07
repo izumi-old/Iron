@@ -35,7 +35,7 @@ import static pet.kozhinov.iron.utils.ValidationUtils.validateId;
 @RequiredArgsConstructor
 @RequestMapping(API_PREFIX)
 @RestController(CaseController.NAME)
-public final class CaseController {
+public class CaseController {
     public static final String NAME = "iron_CaseController";
     private final CaseService caseService;
 

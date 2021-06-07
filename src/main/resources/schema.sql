@@ -35,6 +35,7 @@ CREATE TABLE loan (
 CREATE TABLE loan_case (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     client_id BIGINT REFERENCES person(id),
+    creator_id BIGINT REFERENCES person(id),
     loan_id BIGINT REFERENCES loan(id),
     amount DECIMAL(19, 4) NOT NULL CHECK (amount > 0),
     duration_months SMALLINT NOT NULL CHECK (duration_months > 0),

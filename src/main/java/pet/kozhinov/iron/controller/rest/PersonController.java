@@ -33,7 +33,7 @@ import static pet.kozhinov.iron.utils.SecurityUtils.hasRole;
 @RequiredArgsConstructor
 @RequestMapping(API_PREFIX)
 @RestController(PersonController.NAME)
-public final class PersonController {
+public class PersonController {
     public static final String NAME = "iron_PersonController";
     private final PersonService personService;
 

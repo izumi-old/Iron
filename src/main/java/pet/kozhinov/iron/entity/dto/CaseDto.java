@@ -25,6 +25,9 @@ public class CaseDto {
     private String clientId;
 
     @NotBlank
+    private String creatorId;
+
+    @NotBlank
     private String loanId;
 
     @NotNull

@@ -35,6 +35,7 @@ public class CaseMapper implements Mapper<Case, CaseDto> {
         CaseDto dto = new CaseDto();
         dto.setId(aCase.getId().toString());
         dto.setClientId(aCase.getClient().getId().toString());
+        dto.setCreatorId(aCase.getCreator().getId().toString());
         dto.setLoanId(aCase.getLoan().getId().toString());
         dto.setAmount(accurateNumberConverter.convert1(aCase.getAmount()));
         dto.setDurationMonths(aCase.getDurationMonths());
@@ -83,9 +84,13 @@ public class CaseMapper implements Mapper<Case, CaseDto> {
     private Case createNewOne(CaseDto dto) {
         Case aCase = new Case();
         String clientId = dto.getClientId();
+        String creatorId = dto.getCreatorId();
         String loanId = dto.getLoanId();
         if (clientId == null) {
             throw new BadRequestException("Client is not specified");
+        }
+        if (creatorId == null) {
+            throw new BadRequestException("Creator is not specified");
         }
         if (loanId == null) {
             throw new BadRequestException("Loan is not specified");
@@ -95,6 +100,8 @@ public class CaseMapper implements Mapper<Case, CaseDto> {
         validateId(loanId);
         aCase.setClient(personRepository.findById(Long.parseLong(clientId))
                 .orElseThrow(() -> new BadRequestException("A client with given id wasn't found")));
+        aCase.setCreator(personRepository.findById(Long.parseLong(creatorId))
+                .orElseThrow(() -> new BadRequestException("A creator with given id wasn't found")));
         aCase.setLoan(loanRepository.findById(Long.parseLong(loanId))
                 .orElseThrow(() -> new BadRequestException("A loan with given id wasn't found")));
         aCase.setPayments(new LinkedList<>());

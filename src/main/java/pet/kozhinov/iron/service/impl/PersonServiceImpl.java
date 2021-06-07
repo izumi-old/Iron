@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static pet.kozhinov.iron.entity.Role.Default.CLIENT;
 import static pet.kozhinov.iron.utils.Utils.toPage;
 
 @RequiredArgsConstructor
@@ -30,6 +31,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public PersonDto signup(PersonDto personDto) {
         Person toSave = mapper.map2(personDto);
+        toSave.getRoles().addAll(roleService.getRolesByRoleName(CLIENT.getName()));
         Person saved = repository.save(toSave);
         return mapper.map1(saved);
     }

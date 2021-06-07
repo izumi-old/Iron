@@ -10,6 +10,7 @@ import pet.kozhinov.iron.entity.dto.CaseDto;
 import pet.kozhinov.iron.entity.notification.email.CaseConfirmedNotification;
 import pet.kozhinov.iron.entity.notification.email.Email;
 import pet.kozhinov.iron.entity.notification.email.NewLoanCaseNotification;
+import pet.kozhinov.iron.exception.ForbiddenException;
 import pet.kozhinov.iron.exception.NotFoundException;
 import pet.kozhinov.iron.mapper.CaseMapper;
 import pet.kozhinov.iron.repository.CaseRepository;
@@ -111,6 +112,10 @@ public class CaseServiceImpl implements CaseService {
 
     @Override
     public CaseDto save(CaseDto loanOffer) {
+        if (loanOffer.getCreatorId() != null && loanOffer.getCreatorId().equals(loanOffer.getClientId())) {
+            throw new ForbiddenException();
+        }
+
         Case toSave = mapper.map2(loanOffer);
         toSave.setPayments(paymentsService.schedule(toSave));
         toSave.setStatusBankSide(Status.PENDING);
